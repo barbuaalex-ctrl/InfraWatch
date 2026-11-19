@@ -1,6 +1,6 @@
 services:
   infrawatch:
-    image: ghcr.io/barbuaalex-ctrl/infrawatch:ci-6
+    image: ghcr.io/barbuaalex-ctrl/infrawatch:${IMAGE_TAG:?Set IMAGE_TAG}
     container_name: infrawatch
     ports:
       - "3001:3000"
