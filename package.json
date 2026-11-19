@@ -1,0 +1,15 @@
+{
+  "name": "infrawatch-app",
+  "version": "0.9.0",
+  "private": true,
+  "description": "Standalone InfraWatch monitoring application",
+  "scripts": {
+    "start": "node backend/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "fflate": "^0.8.3",
+    "prom-client": "^15.1.3"
+  }
+}

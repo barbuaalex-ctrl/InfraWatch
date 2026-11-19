@@ -1,0 +1,43 @@
+// Dashboard enhancement layer: shared rendering for overview and monitor details.
+const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+if (!localStorage.getItem('theme')) document.body.classList.add('dark');
+const analytics = document.createElement('section');
+analytics.className = 'analytics-grid';
+analytics.innerHTML = `<article class="panel"><div class="chart-heading"><div><p class="section-kicker">OBSERVABILITY</p><h2>Response overview</h2><p>Measured response time · latest stored checks</p></div><select id="chart-target" aria-label="Monitor displayed on chart"></select></div><div id="overview-plot"></div></article><article class="panel"><p class="section-kicker">FLEET HEALTH</p><h2>Current availability</h2><div class="ring" id="health-ring"><div class="ring-center"><strong id="health-score">—</strong><span>targets healthy now</span></div></div><div id="health-legend"></div></article>`;
+$('#summary').after(analytics);
+const services = document.createElement('section'); services.innerHTML='<div class="chart-heading section-title"><div><h2>Monitored services</h2><p class="sub">Website checks and infrastructure examples</p></div><span class="live-badge" id="feed-state">Connecting</span></div><div class="service-grid" id="service-cards"></div>';
+analytics.after(services);
+const toastStack=document.createElement('div');toastStack.className='toast-stack';toastStack.setAttribute('aria-live','polite');document.body.append(toastStack);
+function toast(message,error=false){const el=document.createElement('div');el.className='toast'+(error?' error':'');el.textContent=message;toastStack.append(el);setTimeout(()=>el.remove(),4500)}
+let selectedTarget=null, detailTarget=null;
+function drawPlot(container,history){
+  container.replaceChildren(); const wrapper=document.createElement('div');wrapper.className='plot';container.append(wrapper);
+  if(!history.length){wrapper.innerHTML='<div class="empty-chart">No measurements yet.<br>History appears after the first website check.</div>';return}
+  const good=history.filter(h=>Number.isFinite(h.responseTime)),max=Math.max(1,...good.map(h=>h.responseTime))*1.15;
+  const x=i=>36+i*928/Math.max(1,history.length-1),y=h=>184-(h.responseTime/max)*160;
+  // Null responses are gaps, rather than fictitious zero-millisecond measurements.
+  let trace='';history.forEach((h,i)=>{if(Number.isFinite(h.responseTime))trace+=`${i&&Number.isFinite(history[i-1].responseTime)?'L':'M'}${x(i)},${y(h)} `});
+  wrapper.innerHTML=`<svg viewBox="0 0 1000 210" preserveAspectRatio="none" role="img" aria-label="Response time history"><path class="grid" d="M36 24H964 M36 104H964 M36 184H964"/><path class="trace" d="${trace}" vector-effect="non-scaling-stroke"/><line class="guide" y1="20" y2="184" visibility="hidden"/><circle class="focus" r="4" visibility="hidden"/><rect width="1000" height="210" fill="transparent"/></svg><div class="chart-tooltip"></div>`;
+  const svg=wrapper.querySelector('svg'),guide=wrapper.querySelector('.guide'),focus=wrapper.querySelector('.focus'),tip=wrapper.querySelector('.chart-tooltip');
+  function inspect(clientX){const bounds=svg.getBoundingClientRect();const px=(clientX-bounds.left)/bounds.width*1000;const i=Math.max(0,Math.min(history.length-1,Math.round((px-36)/928*(history.length-1))));const h=history[i];guide.setAttribute('x1',x(i));guide.setAttribute('x2',x(i));guide.setAttribute('visibility','visible');focus.setAttribute('cx',x(i));focus.setAttribute('cy',Number.isFinite(h.responseTime)?y(h):184);focus.setAttribute('visibility','visible');tip.innerHTML=`<b>${h.responseTime==null?'No response':h.responseTime+' ms'}</b><span>${escapeHTML(new Date(h.at).toLocaleString())}</span><small>HTTP ${escapeHTML(h.httpStatus??'—')} · ${escapeHTML(h.status)}</small>`;tip.className='chart-tooltip show';const left=x(i)/1000*bounds.width;tip.style.left=Math.max(0,Math.min(bounds.width-tip.offsetWidth,left+14))+'px';tip.style.top='10px'}
+  svg.addEventListener('pointermove',e=>inspect(e.clientX));svg.addEventListener('pointerleave',()=>{tip.className='chart-tooltip';guide.setAttribute('visibility','hidden');focus.setAttribute('visibility','hidden')});
+  const axis=document.createElement('div');axis.className='axis-labels';axis.innerHTML=`<span>${escapeHTML(new Date(history[0].at).toLocaleTimeString())}</span><span>Max scale ${Math.round(max)} ms</span><span>${escapeHTML(new Date(history.at(-1).at).toLocaleTimeString())}</span>`;container.append(axis);
+}
+const descriptions={'api-prod-01':'Demo API server: handles application requests.','web-prod-01':'Demo frontend server: serves the website.','worker-stg-01':'Demo staging worker: runs background jobs in a test environment.','db-prod-01':'Demo database server: stores application data.'};
+function dashboardRender(){
+ const web=targets.filter(t=>t.url),counts=['healthy','warning','down'].map(s=>targets.filter(t=>t.status===s).length),total=targets.length;
+ $('#summary').innerHTML=[[total,'Monitored targets','blue'],[counts[0],'Healthy now','green'],[counts[1]+counts[2],'Needs attention','orange'],[web.length,'Live website monitors','purple']].map(([n,l,c])=>`<article class="card ${c}"><strong>${n}</strong><span>${l}</span></article>`).join('');
+ const pct=total?counts[0]/total*100:0,warning=total?counts[1]/total*100:0;$('#health-score').textContent=total?Math.round(pct)+'%':'—';$('#health-ring').style.background=`conic-gradient(#32d6a0 0 ${pct}%,#f5b344 ${pct}% ${pct+warning}%,#fa6e82 ${pct+warning}% 100%)`;$('#health-legend').innerHTML=['Healthy','Warning','Down'].map((s,i)=>`<div class="legend-row"><span><i style="background:${['#32d6a0','#f5b344','#fa6e82'][i]}"></i>${s}</span><b>${counts[i]} targets</b></div>`).join('');
+ const select=$('#chart-target');if(!web.some(t=>String(t.id)===String(selectedTarget)))selectedTarget=web[0]?.id;select.innerHTML=web.map(t=>`<option value="${t.id}">${escapeHTML(t.name)}</option>`).join('');select.value=selectedTarget??'';drawPlot($('#overview-plot'),web.find(t=>String(t.id)===String(selectedTarget))?.history||[]);
+ $('#service-cards').innerHTML=targets.map(t=>`<article class="service-card"><div class="service-head"><h3>${escapeHTML(t.name)}</h3><span class="status ${escapeHTML(t.status)}">${escapeHTML(t.status)}</span></div><p>${escapeHTML(t.url||descriptions[t.name]||'Infrastructure demo')}</p><div class="mini-stats"><span><b>${t.url?(t.responseTime??'—')+' ms':(t.cpu??'—')+'%'}</b>${t.url?'Response time':'CPU · demo'}</span><span><b>${t.url?(t.httpStatus??'—'):(t.ram??'—')+'%'}</b>${t.url?'HTTP status':'RAM · demo'}</span></div>${t.url?`<button class="icon-button" data-open-monitor="${t.id}">Explore monitor ↗</button>`:'<small>DEMO DATA · not a connected server</small>'}</article>`).join('');
+ if(detailTarget)renderDetails(detailTarget);
+}
+function renderDetails(id){const t=targets.find(t=>String(t.id)===String(id));if(!t){detailTarget=null;return}const h=t.history||[],available=h.filter(x=>x.status!=='down').length;const peak=h.filter(x=>Number.isFinite(x.responseTime)).sort((a,b)=>b.responseTime-a.responseTime)[0];$('#details').innerHTML=`<p class="section-kicker">MONITOR INSIGHTS</p><h2>${escapeHTML(t.name)}</h2><p>${escapeHTML(t.url)}</p><div id="detail-plot"></div><div class="detail-stats"><span><b>${t.responseTime??'—'} ms</b>Latest response</span><span><b>${h.length?(available/h.length*100).toFixed(1)+'%':'—'}</b>Successful checks · stored samples</span><span><b>${peak?peak.responseTime+' ms':'—'}</b>Peak${peak?' · '+escapeHTML(new Date(peak.at).toLocaleString()):''}</span></div>`;drawPlot($('#detail-plot'),h)}
+showDetails=async id=>{detailTarget=id;renderDetails(id);$('#details').scrollIntoView({behavior:'smooth',block:'nearest'})};
+const originalRender=render;render=function(){originalRender();dashboardRender()};
+$('#chart-target').addEventListener('change',e=>{selectedTarget=e.target.value;dashboardRender()});
+document.addEventListener('click',e=>{if(e.target.dataset.openMonitor){document.querySelector('[data-view="servers"]').click();showDetails(e.target.dataset.openMonitor)}});
+stream.addEventListener('open',()=>{$('#feed-state').textContent='Live connection';});stream.addEventListener('error',()=>{$('#feed-state').textContent='Reconnecting';});
+const previousStates=new Map();stream.addEventListener('targets',e=>{JSON.parse(e.data).forEach(t=>{if(isAdmin&&t.kind!=='windows-agent'&&previousStates.has(t.id)&&previousStates.get(t.id)!==t.status)toast(`${t.name}: ${t.status}`,t.status==='down');previousStates.set(t.id,t.status)})});
+$('#login-form').addEventListener('submit',()=>{setTimeout(()=>{if(isAdmin)toast('Administrator session active')},600)});
+dashboardRender();

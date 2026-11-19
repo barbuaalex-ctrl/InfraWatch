@@ -1,0 +1,2 @@
+const test=require('node:test'),assert=require('node:assert/strict');const {removeSeededDemos}=require('./demo-cleanup');
+test('cleanup removes only the four seeded demos, retaining real and user-created targets',()=>{const seeds=['api-prod-01','web-prod-01','worker-stg-01','db-prod-01'].map((name,i)=>({id:i+1,name}));const real={id:'real-device',name:'api-prod-01',kind:'windows-agent'},site={id:1,name:'api-prod-01',url:'https://example.com'},custom={id:4,name:'My database'};assert.deepEqual(removeSeededDemos([...seeds,real,site,custom]),[real,site,custom]);});
