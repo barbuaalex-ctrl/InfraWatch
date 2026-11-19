@@ -1,12 +1,21 @@
 services:
   infrawatch:
-    image: ghcr.io/barbuaalex-ctrl/infrawatch:ci-3
+    image: ghcr.io/barbuaalex-ctrl/infrawatch:ci-6
     container_name: infrawatch
     ports:
       - "3001:3000"
     volumes:
       - infrawatch-data:/app/backend/data
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python3
+        - healthcheck.py
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
 
 volumes:
   infrawatch-data:
