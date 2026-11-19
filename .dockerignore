@@ -1,0 +1,11 @@
+node_modules/
+.git/
+backend/data/
+output/
+.env
+.env.*
+!.env.example
+agent/*.zip
+agent/config.json
+agent/connect.json
+npm-debug.log*
