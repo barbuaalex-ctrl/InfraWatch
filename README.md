@@ -36,8 +36,9 @@ Device details shows the actual hostname, Windows edition/version, CPU model/cor
 Requires Node.js 24 or newer.
 
 ```powershell
-cd "H:\infrawatch app"
-npm install
+git clone https://github.com/barbuaalex-ctrl/InfraWatch.git
+cd InfraWatch
+npm ci
 npm start
 ```
 
