@@ -1,7 +1,8 @@
 node_modules/
-backend/data/
+/app/backend/data/
 .env
-
-output/
-
-agent/*.zip
+/app/output/
+/app/agent/*.zip
+/app/agent/config.json
+/app/agent/connect.json
+/app/agent/connection.json

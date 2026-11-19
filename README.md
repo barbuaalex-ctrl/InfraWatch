@@ -10,7 +10,7 @@ Device Settings lets an administrator rename a device, pause monitoring and choo
 
 The app and agent development baseline is v0.9.0; earlier arbitrary 4.x agent labels are retired. The agent checks update availability on connection and every 30 minutes, with installation after clicking Update and confirming. Update packages come from the configured InfraWatch server and are SHA-256 checked for download integrity. The updater keeps config.json and connection.json, backs up replaced agent files, and resumes monitoring when it was running. Use a trusted network/server; these packages are not digitally signed. Agents with retired 4.x labels need one manual update including Update-Agent.ps1 and version.json before the normal version comparison can resume.
 
-Every agent release increments agent/version.json. The UI, Windows agent title and ZIP filename use this shared version. Downloads contain a top-level InfraWatch-Agent folder; open that folder after extraction to find Start Agent.cmd. Preserve config.json and connection.json when updating an existing device.
+Every agent release increments `app/agent/version.json`. The UI, Windows agent title and ZIP filename use this shared version. Downloads contain a top-level InfraWatch-Agent folder; open that folder after extraction to find Start Agent.cmd. Preserve config.json and connection.json when updating an existing device.
 
 Device telemetry targets one update per second with the latest Windows agent. Hardware inventory is read at connection and then hourly; CPU/memory counters and system-drive free space are sampled independently. Website intervals are unchanged. Storage percentages describe capacity used, not Task Manager disk activity; cards show system-drive GB free / total as well.
 
@@ -33,21 +33,38 @@ Pairing codes expire after five minutes and require administrator approval. They
 
 Device details shows the actual hostname, Windows edition/version, CPU model/cores/threads, installed RAM, GPU names, and disk capacity/free space. Inventory refreshes hourly; usage metrics target a one-second interval. System-drive free/total GB update with live samples. Old agents need the new Agent.ps1 for these changes. The Download agent tutorial explains how to upgrade while retaining the original device.
 
-Requires Node.js 24 or newer.
+## Run standalone
+
+The application source and npm workspace are under `app/`. Docker configuration is under `devops/`. Standalone operation requires Node.js 24 or newer.
 
 ```powershell
 git clone https://github.com/barbuaalex-ctrl/InfraWatch.git
-cd InfraWatch
+cd InfraWatch/app
 npm ci
 npm start
 ```
 
 Open http://localhost:3000. Stop with Ctrl+C in the terminal running the application.
 
-The frontend and API run together. Website monitors, history, incidents and the changed administrator password are stored in backend/data. Keep this folder to preserve your records.
+The frontend and API run together. Website monitors, history, incidents and the changed administrator password are stored in `app/backend/data/` relative to the repository root. Keep this folder to preserve your records. Run `npm test` from `app/` to check the application.
 
 For the first login, the default administrator password is `infrawatch-admin`. You can change it using Security after logging in. Sessions expire after one hour.
 
 Optional settings: PORT, DATA_DIR, ADMIN_PASSWORD (initial password only) and SESSION_TTL_MS. No Docker, cloud account or infrastructure services are needed.
 
-The previous project remains in H:\PROIECT FINAL. This folder is the standalone application to edit going forward.
+## Run with Docker Compose
+
+Run these commands from the repository root. The Docker build uses that directory as its context.
+
+```sh
+docker compose -f devops/compose.yaml config
+docker compose -f devops/compose.yaml up -d
+```
+
+Open http://localhost:3001. Compose uses the `infrawatch:0.9.0` image and requires the existing external volume `infrawatch-data`, mounted at `/app/backend/data`. If a container started outside this Compose project already owns the name `infrawatch` or port 3001, keep using that deployment until a planned migration. The `up` command is for Compose-managed deployments or an available name and port.
+
+To build a separate verification image from the repository root:
+
+```sh
+docker build -f devops/Dockerfile -t infrawatch:reorg-check .
+```

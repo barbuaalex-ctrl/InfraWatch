@@ -1,0 +1,16 @@
+services:
+  infrawatch:
+    image: infrawatch:0.9.0
+    container_name: infrawatch
+    build:
+      context: ..
+      dockerfile: devops/Dockerfile
+    ports:
+      - "3001:3000"
+    volumes:
+      - infrawatch-data:/app/backend/data
+    restart: unless-stopped
+
+volumes:
+  infrawatch-data:
+    external: true

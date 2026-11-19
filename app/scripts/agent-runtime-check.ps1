@@ -6,7 +6,7 @@ $tempFolder=Join-Path ([System.IO.Path]::GetTempPath()) ('infrawatch-agent-runti
 $null=New-Item -ItemType Directory -Path $tempFolder
 try{
  Invoke-Expression $source
- $expectedVersion=(Get-Content -LiteralPath 'H:\infrawatch app\agent\version.json' -Raw|ConvertFrom-Json).version
+ $expectedVersion=(Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\agent\version.json') -Raw|ConvertFrom-Json).version
  if($form.Text -ne ('infrawatch-agent v'+$expectedVersion)){throw 'Agent title version mismatch'}
  $settingsPath=Join-Path $tempFolder 'connection.json'
  $address.Text='http://127.0.0.1:3000'
