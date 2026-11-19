@@ -1,0 +1,17 @@
+name: infrawatch-ci
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk21
+    container_name: infrawatch-jenkins
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      JAVA_OPTS: "-Xms256m -Xmx768m"
+    mem_limit: 1536m
+    volumes:
+      - jenkins-data:/var/jenkins_home
+
+volumes:
+  jenkins-data:
