@@ -16,6 +16,24 @@ services:
       timeout: 5s
       start_period: 15s
       retries: 3
+  
+  green:
+    image: ghcr.io/barbuaalex-ctrl/infrawatch:${GREEN_IMAGE_TAG:?Set GREEN_IMAGE_TAG}
+    container_name: infrawatch-green
+    ports:
+      - "127.0.0.1:3002:3000"
+    volumes:
+      - green-data:/app/backend/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python3
+        - healthcheck.py
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
 
   nginx:
     image: nginx:stable-alpine
@@ -32,4 +50,5 @@ services:
 volumes:
   infrawatch-data:
     external: true
+  green-data:
   
