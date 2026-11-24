@@ -38,6 +38,6 @@ const originalRender=render;render=function(){originalRender();dashboardRender()
 $('#chart-target').addEventListener('change',e=>{selectedTarget=e.target.value;dashboardRender()});
 document.addEventListener('click',e=>{if(e.target.dataset.openMonitor){document.querySelector('[data-view="servers"]').click();showDetails(e.target.dataset.openMonitor)}});
 stream.addEventListener('open',()=>{$('#feed-state').textContent='Live connection';});stream.addEventListener('error',()=>{$('#feed-state').textContent='Reconnecting';});
-const previousStates=new Map();stream.addEventListener('targets',e=>{JSON.parse(e.data).forEach(t=>{if(isAdmin&&t.kind!=='windows-agent'&&previousStates.has(t.id)&&previousStates.get(t.id)!==t.status)toast(`${t.name}: ${t.status}`,t.status==='down');previousStates.set(t.id,t.status)})});
+const previousStates=new Map();stream.addEventListener('targets',e=>{JSON.parse(e.data).forEach(t=>{if(isAdmin&&!isDeviceAgent(t)&&previousStates.has(t.id)&&previousStates.get(t.id)!==t.status)toast(`${t.name}: ${t.status}`,t.status==='down');previousStates.set(t.id,t.status)})});
 $('#login-form').addEventListener('submit',()=>{setTimeout(()=>{if(isAdmin)toast('Administrator session active')},600)});
 dashboardRender();

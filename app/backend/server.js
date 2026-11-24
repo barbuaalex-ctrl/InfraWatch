@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('node:crypto');
 const client = require('prom-client');
+const {isDeviceAgent}=require('./device-types');
 
 const app = express();
 const adminPassword = process.env.ADMIN_PASSWORD || 'infrawatch-admin';
@@ -101,7 +102,7 @@ app.post('/api/servers/:id/check', requireAdmin, async (req, res) => { const tar
 app.patch('/api/servers/:id', requireAdmin, (req, res) => {
  const target=servers.find(s=>String(s.id)===req.params.id); if(!target)return res.status(404).json({error:'Target not found.'});
  const next={};
- if('thresholds' in req.body){if(target.kind!=='windows-agent'||!req.body.thresholds||typeof req.body.thresholds!=='object'||Array.isArray(req.body.thresholds))return res.status(400).json({error:'Invalid device thresholds.'});next.thresholds={...(target.thresholds||{})};for(const [metric,value] of Object.entries(req.body.thresholds)){if(!['cpu','ram','gpu','disk'].includes(metric)||!Number.isInteger(value)||value<10||value>100)return res.status(400).json({error:'Thresholds must be whole percentages from 10 to 100.'});next.thresholds[metric]=value;}}
+ if('thresholds' in req.body){if(!isDeviceAgent(target)||!req.body.thresholds||typeof req.body.thresholds!=='object'||Array.isArray(req.body.thresholds))return res.status(400).json({error:'Invalid device thresholds.'});next.thresholds={...(target.thresholds||{})};for(const [metric,value] of Object.entries(req.body.thresholds)){if(!['cpu','ram','gpu','disk'].includes(metric)||!Number.isInteger(value)||value<10||value>100)return res.status(400).json({error:'Thresholds must be whole percentages from 10 to 100.'});next.thresholds[metric]=value;}}
  if('paused' in req.body){if(typeof req.body.paused!=='boolean')return res.status(400).json({error:'Invalid pause state.'});if(target.checking)return res.status(409).json({error:'A check is running. Try again in a moment.'});next.paused=req.body.paused;}
  if('name' in req.body){if(typeof req.body.name!=='string'||!req.body.name.trim()||req.body.name.length>60)return res.status(400).json({error:'Name must contain 1–60 characters.'});next.name=req.body.name.trim();}
  if('url' in req.body){try{Object.assign(next,normalizeWebsite(req.body.url));}catch(error){return res.status(400).json({error:error.message});}}

@@ -1,3 +1,4 @@
+function isDeviceAgent(target){return ['windows-agent','linux-agent'].includes(target?.kind);}
 const $ = s => document.querySelector(s); let isAdmin=false; const nativeFetch = window.fetch; window.fetch = (url, options={}) => { const token=localStorage.getItem('infrawatch-token'); options.headers={...(options.headers||{}),...(token?{'x-infrawatch-token':token}:{})}; return nativeFetch(url,options); };
 let targets = [], filter = 'all', query = '', sortBy = 'name';
 const pct = (n, cls='') => n === null ? '<span class="na">--</span>' : `<div class="metric ${cls}"><i style="width:${n}%"></i><b>${n}%</b></div>`;
