@@ -17,6 +17,19 @@ services:
       start_period: 15s
       retries: 3
 
+  nginx:
+    image: nginx:stable-alpine
+    container_name: infrawatch-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+    depends_on:
+      infrawatch:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   infrawatch-data:
     external: true
+  
