@@ -27,7 +27,7 @@ services:
     ports:
       - "127.0.0.1:3002:3000"
     volumes:
-      - green-data:/app/backend/data
+      - infrawatch-data:/app/backend/data
     restart: unless-stopped
     healthcheck:
       test:
@@ -51,5 +51,4 @@ services:
 volumes:
   infrawatch-data:
     external: true
-  green-data:
   
