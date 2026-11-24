@@ -6,6 +6,7 @@ node_modules/
 /app/agent/config.json
 /app/agent/connect.json
 /app/agent/connection.json
+/devops/nginx/active.inc
 
 # Terraform
 .terraform/

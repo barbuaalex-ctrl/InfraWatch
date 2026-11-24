@@ -2,6 +2,12 @@ name: InfraWatch Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Image tag, for example ci-14"
+        required: true
+        default: "ci-14"
+        type: string
 
 permissions:
   contents: read
@@ -11,18 +17,43 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  check-server:
+  deploy:
     if: github.ref == 'refs/heads/main'
     runs-on: [self-hosted, linux, x64, infrawatch-deploy]
-    timeout-minutes: 5
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: /home/adi/infrawatchapp
+
+    env:
+      IMAGE: ghcr.io/barbuaalex-ctrl/infrawatch
+      RELEASE_TAG: ${{ inputs.version }}
 
     steps:
-      - name: Check containers
-        run: docker ps --filter name=infrawatch
-
-      - name: Check active route
-        working-directory: /home/adi/infrawatchapp
-        run: cat devops/nginx/default.conf
-
-      - name: Check application
+      - name: Check current application
         run: curl --fail --silent --show-error http://127.0.0.1:8080/health
+
+      - name: Select deployment target
+        run: |
+          if grep -q 'http://infrawatch:3000;' devops/nginx/active.inc; then
+            echo "ACTIVE_SERVICE=infrawatch" >> "$GITHUB_ENV"
+            echo "TARGET_SERVICE=green" >> "$GITHUB_ENV"
+            echo "TAG_KEY=GREEN_IMAGE_TAG" >> "$GITHUB_ENV"
+          elif grep -q 'http://green:3000;' devops/nginx/active.inc; then
+            echo "ACTIVE_SERVICE=green" >> "$GITHUB_ENV"
+            echo "TARGET_SERVICE=infrawatch" >> "$GITHUB_ENV"
+            echo "TAG_KEY=IMAGE_TAG" >> "$GITHUB_ENV"
+          else
+            echo "Cannot identify the active application"
+            exit 1
+          fi
+
+      - name: Show deployment plan
+        run: |
+          echo "Active service: $ACTIVE_SERVICE"
+          echo "Deploy to: $TARGET_SERVICE"
+          echo "Image: $IMAGE:$RELEASE_TAG"
+
+      - name: Download image
+        run: docker pull "$IMAGE:$RELEASE_TAG"
