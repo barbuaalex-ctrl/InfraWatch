@@ -6,3 +6,10 @@ node_modules/
 /app/agent/config.json
 /app/agent/connect.json
 /app/agent/connection.json
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+terraform.tfvars

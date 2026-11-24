@@ -1,0 +1,28 @@
+data "aws_vpc" "default" {
+  default = true
+}
+
+resource "aws_security_group" "agent" {
+  name_prefix = "infrawatch-agent-"
+  description = "SSH access to the monitored server"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    description = "SSH from my connection"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["82.76.245.13/32"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "infrawatch-agent"
+  }
+}
