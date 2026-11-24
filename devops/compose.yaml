@@ -22,6 +22,8 @@ services:
   green:
     image: ghcr.io/barbuaalex-ctrl/infrawatch:${GREEN_IMAGE_TAG:?Set GREEN_IMAGE_TAG}
     container_name: infrawatch-green
+    profiles:
+      - standby
     ports:
       - "127.0.0.1:3002:3000"
     volumes:
@@ -44,9 +46,6 @@ services:
       - "8080:80"
     volumes:
       - ./nginx:/etc/nginx/conf.d:ro
-    depends_on:
-      green:
-        condition: service_healthy
     restart: unless-stopped
 
 volumes:
