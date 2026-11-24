@@ -1,0 +1,28 @@
+name: InfraWatch Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: infrawatch-deploy
+  cancel-in-progress: false
+
+jobs:
+  check-server:
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, x64, infrawatch-deploy]
+    timeout-minutes: 5
+
+    steps:
+      - name: Check containers
+        run: docker ps --filter name=infrawatch
+
+      - name: Check active route
+        working-directory: /home/adi/infrawatchapp
+        run: cat devops/nginx/default.conf
+
+      - name: Check application
+        run: curl --fail --silent --show-error http://127.0.0.1:8080/health
