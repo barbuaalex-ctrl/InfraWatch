@@ -5,6 +5,10 @@ data "aws_ssm_parameter" "linux_ami" {
 resource "aws_key_pair" "agent" {
   key_name_prefix = "infrawatch-"
   public_key      = file(pathexpand("~/.ssh/infrawatch-ec2.pub"))
+
+  lifecycle {
+    ignore_changes = [public_key]
+  }
 }
 
 resource "aws_instance" "agent" {
