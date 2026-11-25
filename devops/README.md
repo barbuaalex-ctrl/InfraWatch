@@ -1,18 +1,18 @@
-# InfraWatch â€” DevOps
+# InfraWatch — DevOps
 
 ## Organizarea proiectului
 
-- `app/`: aplicaÈ›ia Node.js, interfaÈ›a È™i agenÈ›ii Windows/Linux.
-- `devops/Dockerfile`: imaginea aplicaÈ›iei; instaleazÄƒ È™i Python pentru health check.
-- `devops/compose.yaml`: cele douÄƒ instanÈ›e posibile ale aplicaÈ›iei È™i Nginx.
-- `devops/nginx/`: configuraÈ›ia proxy-ului.
-- `devops/deploy.sh`: verificare, backup, activare È™i rollback.
-- `.github/workflows/`: integrarea continuÄƒ È™i deploy-ul.
+- `app/`: aplicația Node.js, interfața și agenții Windows/Linux.
+- `devops/Dockerfile`: imaginea aplicației; instalează și Python pentru health check.
+- `devops/compose.yaml`: cele două instanțe posibile ale aplicației și Nginx.
+- `devops/nginx/`: configurația proxy-ului.
+- `devops/deploy.sh`: verificare, backup, activare și rollback.
+- `.github/workflows/`: integrarea continuă și deploy-ul.
 - `devops/terraform/`: serverul AWS EC2 monitorizat.
 
-Dashboardul ruleazÄƒ pe VM-ul Debian. EC2 ruleazÄƒ agentul Linux È™i trimite metrici cÄƒtre dashboard printr-un tunel SSH.
+Dashboardul rulează pe VM-ul Debian. EC2 rulează agentul Linux și trimite metrici către dashboard printr-un tunel SSH.
 
-## Servicii È™i date
+## Servicii și date
 
 | Rol | Serviciu Compose | Container | Port pe VM |
 | --- | --- | --- | --- |
@@ -20,15 +20,15 @@ Dashboardul ruleazÄƒ pe VM-ul Debian. EC2 ruleazÄƒ agentul Linux È™i trim
 | Green | green | infrawatch-green | 127.0.0.1:3002 |
 | Intrare pentru utilizatori | nginx | infrawatch-nginx | 8080 |
 
-Portul intern al aplicaÈ›iei este 3000. Nginx primeÈ™te cererile pe 8080 È™i le trimite cÄƒtre instanÈ›a activÄƒ. Green se poate testa direct pe portul 3002 numai din VM.
+Portul intern al aplicației este 3000. Nginx primește cererile pe 8080 și le trimite către instanța activă. Green se poate testa direct pe portul 3002 numai din VM.
 
-Ambele instanÈ›e folosesc acelaÈ™i volum extern `infrawatch-data`, montat Ã®n `/app/backend/data`. AplicaÈ›ia stocheazÄƒ datele Ã®n fiÈ™iere JSON, de aceea **nu pornim Blue È™i Green simultan pe acest volum**.
+Ambele instanțe folosesc același volum extern `infrawatch-data`, montat în `/app/backend/data`. Aplicația stochează datele în fișiere JSON, de aceea **nu pornim Blue și Green simultan pe acest volum**.
 
-Implementarea alterneazÄƒ Ã®ntre Blue È™i Green, dar are o scurtÄƒ Ã®ntrerupere controlatÄƒ la activare. Nu oferÄƒ deploy fÄƒrÄƒ Ã®ntrerupere. InstanÈ›a nouÄƒ este verificatÄƒ Ã®ntÃ¢i Ã®ntr-un container temporar fÄƒrÄƒ datele reale, apoi instanÈ›a veche este opritÄƒ Ã®naintea pornirii celei noi.
+Implementarea alternează între Blue și Green, dar are o scurtă întrerupere controlată la activare. Nu oferă deploy fără întrerupere. Instanța nouă este verificată întâi într-un container temporar fără datele reale, apoi instanța veche este oprită înaintea pornirii celei noi.
 
 ## Prima pornire cu Docker Compose
 
-PaÈ™ii de mai jos sunt pentru o instalare nouÄƒ pe Linux, cu Docker Engine, pluginul Compose È™i Git deja instalate. DacÄƒ aplicaÈ›ia ruleazÄƒ deja, foloseÈ™te workflow-ul de deploy; nu reiniÈ›ializa configuraÈ›ia activÄƒ.
+Pașii de mai jos sunt pentru o instalare nouă pe Linux, cu Docker Engine, pluginul Compose și Git deja instalate. Dacă aplicația rulează deja, folosește workflow-ul de deploy; nu reinițializa configurația activă.
 
 ```bash
 git clone https://github.com/barbuaalex-ctrl/InfraWatch.git
@@ -36,22 +36,22 @@ cd InfraWatch
 docker volume create infrawatch-data
 ```
 
-CreeazÄƒ `devops/.env` cu ambele valori. Exemplul foloseÈ™te imaginea publicatÄƒ È™i testatÄƒ `ci-14`:
+Creează `devops/.env` cu ambele valori. Exemplul folosește imaginea publicată și testată `ci-14`:
 
 ```dotenv
 IMAGE_TAG=ci-14
 GREEN_IMAGE_TAG=ci-14
 ```
 
-Exemplul existent `devops/.env.example` conÈ›ine doar `IMAGE_TAG`; pentru configuraÈ›ia actualÄƒ trebuie adÄƒugat È™i `GREEN_IMAGE_TAG`.
+Exemplul existent `devops/.env.example` conține doar `IMAGE_TAG`; pentru configurația actuală trebuie adăugat și `GREEN_IMAGE_TAG`.
 
-CreeazÄƒ `devops/nginx/active.inc` cu aceastÄƒ linie, pentru prima pornire pe Blue:
+Creează `devops/nginx/active.inc` cu această linie, pentru prima pornire pe Blue:
 
 ```nginx
 proxy_pass http://infrawatch:3000;
 ```
 
-RuleazÄƒ din rÄƒdÄƒcina repository-ului:
+Rulează din rădăcina repository-ului:
 
 ```bash
 docker compose --env-file devops/.env -f devops/compose.yaml config
@@ -60,81 +60,81 @@ docker compose --env-file devops/.env -f devops/compose.yaml up -d infrawatch
 docker inspect infrawatch --format '{{.State.Health.Status}}'
 ```
 
-AÈ™teaptÄƒ rezultatul `healthy`. DacÄƒ apare `starting`, repetÄƒ ultima comandÄƒ dupÄƒ cÃ¢teva secunde. DacÄƒ apare `unhealthy`, verificÄƒ logurile Ã®nainte sÄƒ continui.
+Așteaptă rezultatul `healthy`. Dacă apare `starting`, repetă ultima comandă după câteva secunde. Dacă apare `unhealthy`, verifică logurile înainte să continui.
 
 ```bash
 docker compose --env-file devops/.env -f devops/compose.yaml up -d nginx
 curl -i http://localhost:8080/health
 ```
 
-Rezultatul aÈ™teptat este HTTP 200 È™i `{"status":"ok"}`. Dashboardul se deschide la `http://VM_IP:8080`.
+Rezultatul așteptat este HTTP 200 și `{"status":"ok"}`. Dashboardul se deschide la `http://VM_IP:8080`.
 
-Serviciile aplicaÈ›iei au profilul `standby`: le pornim explicit dupÄƒ numele serviciului. Nu folosi `--profile standby up -d`, deoarece ar porni ambele instanÈ›e pe aceleaÈ™i date.
+Serviciile aplicației au profilul `standby`: le pornim explicit după numele serviciului. Nu folosi `--profile standby up -d`, deoarece ar porni ambele instanțe pe aceleași date.
 
-FiÈ™ierele `devops/.env` È™i `devops/nginx/active.inc` sunt locale È™i ignorate de Git. Primul pÄƒstreazÄƒ tagurile imaginilor, al doilea instanÈ›a activÄƒ. `default.conf` include `active.inc`; adresa internÄƒ foloseÈ™te HTTP.
+Fișierele `devops/.env` și `devops/nginx/active.inc` sunt locale și ignorate de Git. Primul păstrează tagurile imaginilor, al doilea instanța activă. `default.conf` include `active.inc`; adresa internă folosește HTTP.
 
-## CI â€” testare È™i publicare
+## CI — testare și publicare
 
-Workflow-ul `InfraWatch CI` ruleazÄƒ la push pe main, la pull request cÄƒtre main sau manual:
+Workflow-ul `InfraWatch CI` rulează la push pe main, la pull request către main sau manual:
 
-1. DescarcÄƒ sursele pe un runner GitHub Ubuntu.
-2. InstaleazÄƒ Node.js 24 È™i dependenÈ›ele cu `npm ci`.
-3. RuleazÄƒ `npm test` din `app/`.
-4. ConstruieÈ™te imaginea Docker.
-5. Pe main, se autentificÄƒ Ã®n GHCR cu tokenul automat `GITHUB_TOKEN` È™i publicÄƒ imaginea.
+1. Descarcă sursele pe un runner GitHub Ubuntu.
+2. Instalează Node.js 24 și dependențele cu `npm ci`.
+3. Rulează `npm test` din `app/`.
+4. Construiește imaginea Docker.
+5. Pe main, se autentifică în GHCR cu tokenul automat `GITHUB_TOKEN` și publică imaginea.
 
-`ci-N` foloseÈ™te numÄƒrul rulÄƒrii workflow-ului. Este identificatorul buildului; versiunea aplicaÈ›iei È™i agentului este separatÄƒ, de exemplu `0.10.0`. Un push pe main publicÄƒ imaginea, dar nu schimbÄƒ automat aplicaÈ›ia de pe VM.
+`ci-N` folosește numărul rulării workflow-ului. Este identificatorul buildului; versiunea aplicației și agentului este separată, de exemplu `0.10.0`. Un push pe main publică imaginea, dar nu schimbă automat aplicația de pe VM.
 
-## CD â€” activare din GitHub Actions
+## CD — activare din GitHub Actions
 
-ÃŽn GitHub: **Actions â†’ InfraWatch Deploy â†’ Run workflow**. SelecteazÄƒ main, introdu tagul unei imagini deja publicate È™i lasÄƒ simularea dezactivatÄƒ pentru un deploy normal.
+În GitHub: **Actions → InfraWatch Deploy → Run workflow**. Selectează main, introdu tagul unei imagini deja publicate și lasă simularea dezactivată pentru un deploy normal.
 
-DeclanÈ™area este manualÄƒ; paÈ™ii de deploy È™i rollback sunt automatizaÈ›i.
+Declanșarea este manuală; pașii de deploy și rollback sunt automatizați.
 
-Workflow-ul are nevoie de un runner propriu Linux x64, online, cu eticheta `infrawatch-deploy`, acces la Docker È™i drept de scriere Ã®n checkout-ul aplicaÈ›iei. ÃŽn configuraÈ›ia proiectului, checkout-ul este `/home/adi/infrawatchapp`.
+Workflow-ul are nevoie de un runner propriu Linux x64, online, cu eticheta `infrawatch-deploy`, acces la Docker și drept de scriere în checkout-ul aplicației. În configurația proiectului, checkout-ul este `/home/adi/infrawatchapp`.
 
-Workflow-ul nu face checkout sau git pull: executÄƒ scriptul È™i configuraÈ›ia existente Ã®n acel director. DupÄƒ schimbÄƒri ale scripturilor, actualizeazÄƒ checkout-ul local Ã®naintea deploy-ului. Calea este scrisÄƒ atÃ¢t Ã®n workflow, cÃ¢t È™i Ã®n script; pentru alt server trebuie adaptatÄƒ Ã®n ambele locuri.
+Workflow-ul nu face checkout sau git pull: execută scriptul și configurația existente în acel director. După schimbări ale scripturilor, actualizează checkout-ul local înaintea deploy-ului. Calea este scrisă atât în workflow, cât și în script; pentru alt server trebuie adaptată în ambele locuri.
 
 ### Variabilele folosite
 
-| VariabilÄƒ | De ce existÄƒ |
+| Variabilă | De ce există |
 | --- | --- |
-| IMAGE | Adresa imaginii Ã®n registry, fÄƒrÄƒ tag. |
+| IMAGE | Adresa imaginii în registry, fără tag. |
 | RELEASE_TAG | Buildul ales pentru deploy, de exemplu ci-14. |
-| ACTIVE_SERVICE | InstanÈ›a care primeÈ™te traficul acum, cititÄƒ din active.inc. |
-| TARGET_SERVICE | CealaltÄƒ instanÈ›Äƒ, pe care activÄƒm versiunea aleasÄƒ. |
-| TAG_KEY | Linia din .env care trebuie actualizatÄƒ: IMAGE_TAG sau GREEN_IMAGE_TAG. |
-| SIMULATE_FAILURE | ActiveazÄƒ eroarea intenÈ›ionatÄƒ pentru demonstrarea rollback-ului. |
-| GITHUB_ENV | FiÈ™ier oferit de GitHub Actions; valorile scrise aici devin variabile de mediu Ã®n paÈ™ii urmÄƒtori ai aceluiaÈ™i job. |
+| ACTIVE_SERVICE | Instanța care primește traficul acum, citită din active.inc. |
+| TARGET_SERVICE | Cealaltă instanță, pe care activăm versiunea aleasă. |
+| TAG_KEY | Linia din .env care trebuie actualizată: IMAGE_TAG sau GREEN_IMAGE_TAG. |
+| SIMULATE_FAILURE | Activează eroarea intenționată pentru demonstrarea rollback-ului. |
+| GITHUB_ENV | Fișier oferit de GitHub Actions; valorile scrise aici devin variabile de mediu în pașii următori ai aceluiași job. |
 
-Fiecare pas ruleazÄƒ separat. De aceea variabilele stabilite la alegerea È›intei sunt transmise prin `GITHUB_ENV`. Scriptul primeÈ™te astfel aceleaÈ™i decizii fÄƒrÄƒ sÄƒ identifice din nou instanÈ›a activÄƒ.
+Fiecare pas rulează separat. De aceea variabilele stabilite la alegerea țintei sunt transmise prin `GITHUB_ENV`. Scriptul primește astfel aceleași decizii fără să identifice din nou instanța activă.
 
-`concurrency` permite un singur deploy din acest workflow la un moment dat. `cancel-in-progress: false` evitÄƒ Ã®ntreruperea unui deploy Ã®n curs de cÄƒtre o nouÄƒ cerere. Nu protejeazÄƒ Ã®mpotriva comenzilor Docker executate manual Ã®n paralel.
+`concurrency` permite un singur deploy din acest workflow la un moment dat. `cancel-in-progress: false` evită întreruperea unui deploy în curs de către o nouă cerere. Nu protejează împotriva comenzilor Docker executate manual în paralel.
 
 ### Ce face deploy.sh
 
-1. VerificÄƒ formatul tagului È™i salveazÄƒ configuraÈ›ia localÄƒ Ã®ntr-un director de backup.
-2. PorneÈ™te imaginea Ã®ntr-un container temporar fÄƒrÄƒ reÈ›ea, fÄƒrÄƒ volumul real È™i cu limita de memorie de 256 MB. VerificÄƒ aplicaÈ›ia din interiorul containerului.
-3. OpreÈ™te cele douÄƒ servicii pentru a evita scrierile simultane.
-4. CopiazÄƒ datele instanÈ›ei active Ã®n backup, sub `/home/adi/infrawatch-backups/`.
-5. ActualizeazÄƒ tagul È›intei Ã®n .env, porneÈ™te È›inta È™i verificÄƒ health check-ul.
-6. ConfirmÄƒ cÄƒ È›inta foloseÈ™te volumul `infrawatch-data`.
-7. Scrie noua destinaÈ›ie Ã®n active.inc, verificÄƒ Nginx, reÃ®ncarcÄƒ configuraÈ›ia È™i verificÄƒ accesul prin 8080.
+1. Verifică formatul tagului și salvează configurația locală într-un director de backup.
+2. Pornește imaginea într-un container temporar fără rețea, fără volumul real și cu limita de memorie de 256 MB. Verifică aplicația din interiorul containerului.
+3. Oprește cele două servicii pentru a evita scrierile simultane.
+4. Copiază datele instanței active în backup, sub `/home/adi/infrawatch-backups/`.
+5. Actualizează tagul țintei în .env, pornește ținta și verifică health check-ul.
+6. Confirmă că ținta folosește volumul `infrawatch-data`.
+7. Scrie noua destinație în active.inc, verifică Nginx, reîncarcă configurația și verifică accesul prin 8080.
 
-InstanÈ›a precedentÄƒ rÄƒmÃ¢ne opritÄƒ. Nu este necesar sÄƒ modifici manual Blue/Green la fiecare deploy.
+Instanța precedentă rămâne oprită. Nu este necesar să modifici manual Blue/Green la fiecare deploy.
 
-### Rollback È™i limite
+### Rollback și limite
 
-DacÄƒ apare o eroare Ã®n partea de activare, scriptul opreÈ™te È›inta, restabileÈ™te configuraÈ›ia salvatÄƒ, reporneÈ™te instanÈ›a precedentÄƒ È™i reÃ®ncarcÄƒ Nginx. DacÄƒ nu poate confirma oprirea È›intei sau repornirea instanÈ›ei precedente, raporteazÄƒ necesitatea unei verificÄƒri manuale.
+Dacă apare o eroare în partea de activare, scriptul oprește ținta, restabilește configurația salvată, repornește instanța precedentă și reîncarcă Nginx. Dacă nu poate confirma oprirea țintei sau repornirea instanței precedente, raportează necesitatea unei verificări manuale.
 
-OpÈ›iunea `test_rollback` provoacÄƒ o eroare dupÄƒ pornirea È™i verificarea È›intei, Ã®nainte de schimbarea traficului. Rularea apare ca eÈ™uatÄƒ chiar dacÄƒ revenirea reuÈ™eÈ™te: versiunea solicitatÄƒ nu a fost activatÄƒ. Verificarea finalÄƒ este HTTP 200 pe 8080.
+Opțiunea `test_rollback` provoacă o eroare după pornirea și verificarea țintei, înainte de schimbarea traficului. Rularea apare ca eșuată chiar dacă revenirea reușește: versiunea solicitată nu a fost activată. Verificarea finală este HTTP 200 pe 8080.
 
-Datele rÄƒmÃ¢n Ã®n volumul comun. Rollback-ul nu restaureazÄƒ automat fiÈ™ierele din backup È™i presupune compatibilitatea versiunii vechi cu datele existente. Nu existÄƒ monitorizare automatÄƒ de zece minute dupÄƒ deploy sau restaurare garantatÄƒ pentru orice schimbare de format a datelor.
+Datele rămân în volumul comun. Rollback-ul nu restaurează automat fișierele din backup și presupune compatibilitatea versiunii vechi cu datele existente. Nu există monitorizare automată de zece minute după deploy sau restaurare garantată pentru orice schimbare de format a datelor.
 
-Health check-ul Docker marcheazÄƒ starea aplicaÈ›iei. `restart: unless-stopped` nu reporneÈ™te un container doar pentru cÄƒ a devenit `unhealthy`.
+Health check-ul Docker marchează starea aplicației. `restart: unless-stopped` nu repornește un container doar pentru că a devenit `unhealthy`.
 
-## Terraform È™i demonstraÈ›ia
+## Terraform și demonstrația
 
-Terraform creeazÄƒ un EC2 Amazon Linux, o pereche de chei publice È™i un Security Group Ã®n VPC-ul implicit existent. User data instaleazÄƒ agentul È™i Ã®l porneÈ™te ca serviciu systemd. Conectarea dispozitivului Ã®n aplicaÈ›ie necesitÄƒ tunelul SSH È™i aprobarea codului temporar.
+Terraform creează un EC2 Amazon Linux, o pereche de chei publice și un Security Group în VPC-ul implicit existent. User data instalează agentul și îl pornește ca serviciu systemd. Conectarea dispozitivului în aplicație necesită tunelul SSH și aprobarea codului temporar.
 
-Comenzile, verificÄƒrile de dinaintea prezentÄƒrii È™i oprirea resurselor sunt Ã®n [ghidul demonstraÈ›iei](DEMO.md).
+Comenzile, verificările de dinaintea prezentării și oprirea resurselor sunt în [ghidul demonstrației](DEMO.md).

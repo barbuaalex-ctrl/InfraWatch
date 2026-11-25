@@ -1,8 +1,8 @@
-# DemonstraÈ›ie InfraWatch
+# Demonstrație InfraWatch
 
-Comenzile sunt separate dupÄƒ calculatorul pe care trebuie rulate. ÃŽnlocuieÈ™te `VM_IP` È™i `EC2_PUBLIC_IP` cu adresele actuale. Nu copia textul promptului terminalului.
+Comenzile sunt separate după calculatorul pe care trebuie rulate. Înlocuiește `VM_IP` și `EC2_PUBLIC_IP` cu adresele actuale. Nu copia textul promptului terminalului.
 
-## 1. Verificarea aplicaÈ›iei â€” terminal pe Debian
+## 1. Verificarea aplicației — terminal pe Debian
 
 ```bash
 cd ~/infrawatchapp
@@ -12,26 +12,26 @@ cat devops/nginx/active.inc
 curl -i http://localhost:8080/health
 ```
 
-AÈ™teptat: o instanÈ›Äƒ a aplicaÈ›iei activÄƒ, Nginx pornit È™i HTTP 200. Deschide `http://VM_IP:8080` Ã®n browser. InstanÈ›a opritÄƒ este cea de rezervÄƒ.
+Așteptat: o instanță a aplicației activă, Nginx pornit și HTTP 200. Deschide `http://VM_IP:8080` în browser. Instanța oprită este cea de rezervă.
 
-## 2. Deploy È™i rollback â€” Ã®n GitHub
+## 2. Deploy și rollback — în GitHub
 
-ÃŽn Actions â†’ InfraWatch Deploy:
+În Actions → InfraWatch Deploy:
 
-1. SelecteazÄƒ main È™i un tag publicat, de exemplu ci-14.
-2. Pentru deploy normal, lasÄƒ test_rollback debifat.
-3. UrmÄƒreÈ™te identificarea instanÈ›ei active, descÄƒrcarea imaginii, backup-ul È™i activarea È›intei.
-4. VerificÄƒ din nou serviciile È™i /health folosind comenzile de mai sus.
+1. Selectează main și un tag publicat, de exemplu ci-14.
+2. Pentru deploy normal, lasă test_rollback debifat.
+3. Urmărește identificarea instanței active, descărcarea imaginii, backup-ul și activarea țintei.
+4. Verifică din nou serviciile și /health folosind comenzile de mai sus.
 
-PoÈ›i folosi acelaÈ™i tag pentru a demonstra alternarea instanÈ›elor; asta nu demonstreazÄƒ o modificare a funcÈ›ionalitÄƒÈ›ii aplicaÈ›iei.
+Poți folosi același tag pentru a demonstra alternarea instanțelor; asta nu demonstrează o modificare a funcționalității aplicației.
 
-Pentru rollback, ruleazÄƒ din nou workflow-ul cu test_rollback bifat. Este aÈ™teptatÄƒ o rulare roÈ™ie: scriptul provoacÄƒ intenÈ›ionat o eroare È™i revine la instanÈ›a anterioarÄƒ. AratÄƒ Ã®n log mesajul de revenire, apoi HTTP 200 È™i dashboardul funcÈ›ional.
+Pentru rollback, rulează din nou workflow-ul cu test_rollback bifat. Este așteptată o rulare roșie: scriptul provoacă intenționat o eroare și revine la instanța anterioară. Arată în log mesajul de revenire, apoi HTTP 200 și dashboardul funcțional.
 
-Nu lansa douÄƒ deploy-uri sau comenzi manuale de activare Ã®n paralel.
+Nu lansa două deploy-uri sau comenzi manuale de activare în paralel.
 
-## 3. PregÄƒtirea Terraform â€” terminal pe Debian
+## 3. Pregătirea Terraform — terminal pe Debian
 
-Necesare: Terraform, AWS CLI, profilul AWS default Ã®n `~/.aws/credentials`, cheia SSH localÄƒ È™i acces la internet. Nu pune cheile AWS sau cheia SSH privatÄƒ Ã®n repository.
+Necesare: Terraform, AWS CLI, profilul AWS default în `~/.aws/credentials`, cheia SSH locală și acces la internet. Nu pune cheile AWS sau cheia SSH privată în repository.
 
 ```bash
 cd ~/infrawatchapp/devops/terraform
@@ -39,20 +39,20 @@ aws sts get-caller-identity
 ls -l ~/.ssh/infrawatch-ec2.pub
 ```
 
-DacÄƒ este o instalare nouÄƒ È™i cheia nu existÄƒ, creeaz-o o singurÄƒ datÄƒ:
+Dacă este o instalare nouă și cheia nu există, creeaz-o o singură dată:
 
 ```bash
 ssh-keygen -t ed25519 -f ~/.ssh/infrawatch-ec2
 ```
 
-Nu suprascrie o cheie existentÄƒ. Terraform Ã®ncarcÄƒ Ã®n AWS numai fiÈ™ierul public .pub; cheia privatÄƒ rÄƒmÃ¢ne pe Debian.
+Nu suprascrie o cheie existentă. Terraform încarcă în AWS numai fișierul public .pub; cheia privată rămâne pe Debian.
 
-VerificÄƒ Ã®nainte de plan:
+Verifică înainte de plan:
 
 - Regiunea din providers.tf este eu-central-1, iar profilul este default.
-- ReÈ›eaua foloseÈ™te VPC-ul implicit; acesta trebuie sÄƒ existe Ã®n regiune.
-- Regula SSH din network.tf trebuie sÄƒ conÈ›inÄƒ IP-ul public al conexiunii curente, cu /32. DacÄƒ prezinÈ›i din altÄƒ reÈ›ea, actualizeazÄƒ regula È™i verificÄƒ planul. IP-ul VM-ului din LAN nu este IP-ul public.
-- CÄƒile `../../app/` din main.tf sunt relative la devops/terraform È™i indicÄƒ sursele agentului din acelaÈ™i repository. VerificÄƒ existenÈ›a lor Ã®nainte de plan.
+- Rețeaua folosește VPC-ul implicit; acesta trebuie să existe în regiune.
+- Regula SSH din network.tf trebuie să conțină IP-ul public al conexiunii curente, cu /32. Dacă prezinți din altă rețea, actualizează regula și verifică planul. IP-ul VM-ului din LAN nu este IP-ul public.
+- Căile `../../app/` din main.tf sunt relative la devops/terraform și indică sursele agentului din același repository. Verifică existența lor înainte de plan.
 
 ```bash
 ls -l ../../app/agent/linux/agent.py ../../app/agent/version.json
@@ -61,26 +61,26 @@ terraform validate
 terraform plan -out=ec2-demo.tfplan
 ```
 
-Planul salvat conÈ›ine exact modificÄƒrile pe care urmeazÄƒ sÄƒ le aplici. CiteÈ™te-l Ã®nainte de apply. DacÄƒ mediul nu are resursele proiectului, configuraÈ›ia creeazÄƒ trei resurse administrate: instanÈ›a, cheia publicÄƒ È™i Security Group-ul. DacÄƒ existÄƒ deja, planul poate arÄƒta alt rezultat.
+Planul salvat conține exact modificările pe care urmează să le aplici. Citește-l înainte de apply. Dacă mediul nu are resursele proiectului, configurația creează trei resurse administrate: instanța, cheia publică și Security Group-ul. Dacă există deja, planul poate arăta alt rezultat.
 
 ```bash
 terraform apply ec2-demo.tfplan
 terraform output -raw server_ip
 ```
 
-FoloseÈ™te IP-ul afiÈ™at. Nu reutiliza un IP dintr-o demonstraÈ›ie anterioarÄƒ.
+Folosește IP-ul afișat. Nu reutiliza un IP dintr-o demonstrație anterioară.
 
-## 4. Tunelul â€” porneÈ™te de pe Debian
+## 4. Tunelul — pornește de pe Debian
 
-AplicaÈ›ia rÄƒmÃ¢ne pe Debian. EC2 nu poate accesa direct adresa privatÄƒ a VM-ului de acasÄƒ. Tunelul face legÄƒtura de la portul local 9000 al EC2 cÄƒtre Nginx de pe Debian, prin conexiunea SSH.
+Aplicația rămâne pe Debian. EC2 nu poate accesa direct adresa privată a VM-ului de acasă. Tunelul face legătura de la portul local 9000 al EC2 către Nginx de pe Debian, prin conexiunea SSH.
 
 ```bash
 ssh -i ~/.ssh/infrawatch-ec2 -o ExitOnForwardFailure=yes -R 127.0.0.1:9000:127.0.0.1:8080 ec2-user@EC2_PUBLIC_IP
 ```
 
-AceastÄƒ comandÄƒ deschide È™i terminalul EC2. LasÄƒ sesiunea deschisÄƒ cÃ¢t timp demonstrezi monitorizarea. Portul 9000 nu este expus public pe EC2. DacÄƒ SSH refuzÄƒ conexiunea imediat dupÄƒ creare, aÈ™teaptÄƒ pornirea serverului È™i Ã®ncearcÄƒ din nou.
+Această comandă deschide și terminalul EC2. Lasă sesiunea deschisă cât timp demonstrezi monitorizarea. Portul 9000 nu este expus public pe EC2. Dacă SSH refuză conexiunea imediat după creare, așteaptă pornirea serverului și încearcă din nou.
 
-## 5. Verificarea agentului â€” acum Ã®n terminalul EC2
+## 5. Verificarea agentului — acum în terminalul EC2
 
 ```bash
 sudo cloud-init status --wait
@@ -88,64 +88,64 @@ sudo systemctl status infrawatch-agent --no-pager
 sudo journalctl -u infrawatch-agent -n 20 --no-pager
 ```
 
-User data instaleazÄƒ Python È™i agentul la prima pornire, creeazÄƒ utilizatorul serviciului È™i activeazÄƒ serviciul systemd. Agentul Ã®ncearcÄƒ sÄƒ contacteze `http://127.0.0.1:9000`, adresa capÄƒtului de tunel de pe EC2.
+User data instalează Python și agentul la prima pornire, creează utilizatorul serviciului și activează serviciul systemd. Agentul încearcă să contacteze `http://127.0.0.1:9000`, adresa capătului de tunel de pe EC2.
 
-CiteÈ™te codul temporar din log, apoi Ã®n dashboard: Devices â†’ Add device â†’ Computer / Server. Introdu codul Ã®nainte sÄƒ expire È™i aprobÄƒ dispozitivul ca administrator.
+Citește codul temporar din log, apoi în dashboard: Devices → Add device → Computer / Server. Introdu codul înainte să expire și aprobă dispozitivul ca administrator.
 
-AratÄƒ dispozitivul Ã®n Overview È™i Device details: hostname, Linux, CPU, RAM, uptime È™i spaÈ›iu liber. GPU este indisponibil pe agentul Linux.
+Arată dispozitivul în Overview și Device details: hostname, Linux, CPU, RAM, uptime și spațiu liber. GPU este indisponibil pe agentul Linux.
 
-Serviciul porneÈ™te automat la boot È™i pÄƒstreazÄƒ conexiunea aprobatÄƒ. Transmiterea metricilor depinde Ã®n continuare de dashboard È™i tunelul SSH. Un EC2 recreat este un dispozitiv nou È™i necesitÄƒ aprobare nouÄƒ.
+Serviciul pornește automat la boot și păstrează conexiunea aprobată. Transmiterea metricilor depinde în continuare de dashboard și tunelul SSH. Un EC2 recreat este un dispozitiv nou și necesită aprobare nouă.
 
-## 6. Test local opÈ›ional â€” terminal separat pe Debian
+## 6. Test local opțional — terminal separat pe Debian
 
-DupÄƒ descÄƒrcarea È™i extragerea agentului Linux, deschide folderul InfraWatch-Agent:
+După descărcarea și extragerea agentului Linux, deschide folderul InfraWatch-Agent:
 
 ```bash
 python3 agent.py --server http://127.0.0.1:8080 --state-dir ~/.config/infrawatch-local-test
 ```
 
-AprobÄƒ codul Ã®n dashboard dacÄƒ acest director nu conÈ›ine deja o conexiune validÄƒ. PÄƒstreazÄƒ acelaÈ™i director pentru reconectare. Ctrl+C opreÈ™te acest agent lansat manual.
+Aprobă codul în dashboard dacă acest director nu conține deja o conexiune validă. Păstrează același director pentru reconectare. Ctrl+C oprește acest agent lansat manual.
 
-`127.0.0.1` funcÈ›ioneazÄƒ aici deoarece agentul ruleazÄƒ pe acelaÈ™i Debian ca dashboardul. Pentru alt dispozitiv din LAN se foloseÈ™te adresa VM-ului. DacÄƒ o conexiune salvatÄƒ este respinsÄƒ dupÄƒ È™tergerea dispozitivului din aplicaÈ›ie, foloseÈ™te un director de stare nou È™i aprobÄƒ un cod nou.
+`127.0.0.1` funcționează aici deoarece agentul rulează pe același Debian ca dashboardul. Pentru alt dispozitiv din LAN se folosește adresa VM-ului. Dacă o conexiune salvată este respinsă după ștergerea dispozitivului din aplicație, folosește un director de stare nou și aprobă un cod nou.
 
-## 7. DupÄƒ demonstraÈ›ie
+## 7. După demonstrație
 
-ÃŽnchide sesiunea SSH cu `exit`; tunelul se Ã®nchide È™i EC2 va apÄƒrea offline dupÄƒ lipsa metricilor.
+Închide sesiunea SSH cu `exit`; tunelul se închide și EC2 va apărea offline după lipsa metricilor.
 
-Pentru È™tergerea resurselor administrate de aceastÄƒ configuraÈ›ie, din terminalul Debian:
+Pentru ștergerea resurselor administrate de această configurație, din terminalul Debian:
 
 ```bash
 cd ~/infrawatchapp/devops/terraform
 terraform plan -destroy -out=cleanup.tfplan
 ```
 
-CiteÈ™te resursele propuse pentru È™tergere. Numai dacÄƒ acestea sunt cele pe care doreÈ™ti sÄƒ le elimini:
+Citește resursele propuse pentru ștergere. Numai dacă acestea sunt cele pe care dorești să le elimini:
 
 ```bash
 terraform apply cleanup.tfplan
 ```
 
-È˜tergerea EC2 eliminÄƒ È™i discul rÄƒdÄƒcinÄƒ configurat pentru È™tergere la terminare. Nu È™terge fiÈ™ierul de stare Terraform pentru a opri infrastructura. DacÄƒ doar opreÈ™ti EC2 din consolÄƒ, discul rÄƒmÃ¢ne È™i poate genera costuri; la repornire IP-ul public se poate schimba. Terraform apply nu este o comandÄƒ generalÄƒ de pornire a unei instanÈ›e oprite.
+Ștergerea EC2 elimină și discul rădăcină configurat pentru ștergere la terminare. Nu șterge fișierul de stare Terraform pentru a opri infrastructura. Dacă doar oprești EC2 din consolă, discul rămâne și poate genera costuri; la repornire IP-ul public se poate schimba. Terraform apply nu este o comandă generală de pornire a unei instanțe oprite.
 
-Pentru a opri aplicaÈ›ia localÄƒ, dupÄƒ Ã®ncheierea demonstraÈ›iei:
+Pentru a opri aplicația locală, după încheierea demonstrației:
 
 ```bash
 cd ~/infrawatchapp
 docker compose --env-file devops/.env -f devops/compose.yaml --profile standby stop
 ```
 
-Comanda pÄƒstreazÄƒ containerele È™i volumul. La reluare, citeÈ™te active.inc, porneÈ™te explicit numai serviciul indicat acolo, aÈ™teaptÄƒ healthy È™i porneÈ™te Nginx.
+Comanda păstrează containerele și volumul. La reluare, citește active.inc, pornește explicit numai serviciul indicat acolo, așteaptă healthy și pornește Nginx.
 
 ## Ce explic la prezentare
 
-- Docker Ã®mpacheteazÄƒ aplicaÈ›ia È™i dependenÈ›ele Ã®ntr-o imagine reproductibilÄƒ.
-- GHCR pÄƒstreazÄƒ imaginile; tagul ci-N permite alegerea unui build.
-- CI verificÄƒ sursele Ã®nainte de publicare. CD aplicÄƒ buildul ales pe runnerul Debian.
-- Nginx oferÄƒ o adresÄƒ stabilÄƒ, indiferent de instanÈ›a activÄƒ.
-- Volumul pÄƒstreazÄƒ datele cÃ¢nd containerul este Ã®nlocuit.
-- Deploy-ul opreÈ™te scrierile pentru backup È™i activare; are o Ã®ntrerupere controlatÄƒ.
-- Terraform descrie È™i creeazÄƒ serverul monitorizat; user data instaleazÄƒ agentul; systemd Ã®l supravegheazÄƒ.
-- Tunelul SSH asigurÄƒ legÄƒtura cÄƒtre aplicaÈ›ia de acasÄƒ fÄƒrÄƒ expunerea publicÄƒ a dashboardului.
-- Instalarea agentului este automatÄƒ, dar asocierea iniÈ›ialÄƒ se aprobÄƒ manual prin cod temporar.
+- Docker împachetează aplicația și dependențele într-o imagine reproductibilă.
+- GHCR păstrează imaginile; tagul ci-N permite alegerea unui build.
+- CI verifică sursele înainte de publicare. CD aplică buildul ales pe runnerul Debian.
+- Nginx oferă o adresă stabilă, indiferent de instanța activă.
+- Volumul păstrează datele când containerul este înlocuit.
+- Deploy-ul oprește scrierile pentru backup și activare; are o întrerupere controlată.
+- Terraform descrie și creează serverul monitorizat; user data instalează agentul; systemd îl supraveghează.
+- Tunelul SSH asigură legătura către aplicația de acasă fără expunerea publică a dashboardului.
+- Instalarea agentului este automată, dar asocierea inițială se aprobă manual prin cod temporar.
 
-PÄƒstreazÄƒ capturi cu CI reuÈ™it, deploy reuÈ™it, rollback demonstrat È™i dispozitivul EC2 online, pentru cazul Ã®n care conexiunea de la prezentare nu este disponibilÄƒ.
+Păstrează capturi cu CI reușit, deploy reușit, rollback demonstrat și dispozitivul EC2 online, pentru cazul în care conexiunea de la prezentare nu este disponibilă.

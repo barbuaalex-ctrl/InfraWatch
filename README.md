@@ -8,7 +8,7 @@ The repository separates application code (`app/`), infrastructure and deploymen
 
 ## Device controls and agent updates
 
-Device Settings lets an administrator rename a device, pause monitoring and choose separate CPU/RAM/GPU/storage thresholds (10â€“100%). Recovery occurs five points below each threshold. Device details includes live interactive percentage graphs, period selection, peaks and the reported agent version. The administrator notification center retains triggered/recovered resource and connectivity events, with browser-local read state.
+Device Settings lets an administrator rename a device, pause monitoring and choose separate CPU/RAM/GPU/storage thresholds (10–100%). Recovery occurs five points below each threshold. Device details includes live interactive percentage graphs, period selection, peaks and the reported agent version. The administrator notification center retains triggered/recovered resource and connectivity events, with browser-local read state.
 
 The application and shared agent release are v0.10.0. The Windows agent checks update availability on connection and every 30 minutes, with installation after clicking Update and confirming. Update packages come from the configured InfraWatch server and are SHA-256 checked for download integrity. The updater keeps config.json and connection.json, backs up replaced agent files, and resumes monitoring when it was running. Use a trusted network/server; these packages are not digitally signed. Agents with retired 4.x labels need one manual update including Update-Agent.ps1 and version.json before the normal version comparison can resume.
 
@@ -20,7 +20,7 @@ Windows and Linux device telemetry target one update per second. Hardware invent
 
 Paired computers appear in Overview with CPU, RAM, GPU and disk readings. CPU/RAM/GPU/disk alerts trigger at 90% usage and clear below 85% to avoid repeated alerts around the limit. Missing GPU telemetry is shown as unavailable rather than zero. The Windows agent reports the busiest GPU 3D engines where driver performance counters are available; download the updated agent to enable this reading.
 
-After 30â€“35 seconds without metrics, a connected device is marked offline and a connection alert opens. Active alerts and resolved incidents appear in Alerts. Administrators receive silent in-app notifications once per new alert; viewers see status but receive no notifications. Optional silent desktop notifications can be enabled from Alerts and require browser permission on localhost or HTTPS. The web app must remain open and signed in as admin for notifications.
+After 30–35 seconds without metrics, a connected device is marked offline and a connection alert opens. Active alerts and resolved incidents appear in Alerts. Administrators receive silent in-app notifications once per new alert; viewers see status but receive no notifications. Optional silent desktop notifications can be enabled from Alerts and require browser permission on localhost or HTTPS. The web app must remain open and signed in as admin for notifications.
 
 ## Tutoriale agenți
 

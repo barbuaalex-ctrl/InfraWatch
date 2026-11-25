@@ -1,102 +1,102 @@
-# Tutorial â€” agentul Windows
+# Tutorial — agentul Windows
 
-Agentul ruleazÄƒ pe calculatorul pe care vrei sÄƒ Ã®l monitorizezi. Dashboardul InfraWatch poate rula pe alt calculator sau pe VM. Asocierea se face printr-un cod temporar; nu trebuie sÄƒ copiezi manual un token sau un server ID.
+Agentul rulează pe calculatorul pe care vrei să îl monitorizezi. Dashboardul InfraWatch poate rula pe alt calculator sau pe VM. Asocierea se face printr-un cod temporar; nu trebuie să copiezi manual un token sau un server ID.
 
-## 1. Alege adresa corectÄƒ
+## 1. Alege adresa corectă
 
-| Unde ruleazÄƒ agentul Windows | Adresa InfraWatch |
+| Unde rulează agentul Windows | Adresa InfraWatch |
 | --- | --- |
-| Pe un PC din aceeaÈ™i reÈ›ea cu VM-ul Debian | http://VM_IP:8080 |
-| Pe acelaÈ™i Windows pe care ruleazÄƒ aplicaÈ›ia cu npm start | http://127.0.0.1:3000 |
-| Pe alt PC, cÃ¢nd aplicaÈ›ia ruleazÄƒ cu npm start | http://IP_CALCULATOR_APLICATIE:3000 |
+| Pe un PC din aceeași rețea cu VM-ul Debian | http://VM_IP:8080 |
+| Pe același Windows pe care rulează aplicația cu npm start | http://127.0.0.1:3000 |
+| Pe alt PC, când aplicația rulează cu npm start | http://IP_CALCULATOR_APLICATIE:3000 |
 
-ÃŽnlocuieÈ™te numele din exemple cu IP-ul real. ÃŽn configuraÈ›ia proiectului, intrarea prin Docker/Nginx este portul **8080**.
+Înlocuiește numele din exemple cu IP-ul real. În configurația proiectului, intrarea prin Docker/Nginx este portul **8080**.
 
-Pe Debian, poÈ›i afla adresele VM-ului cu `hostname -I`. Alege adresa din reÈ›eaua localÄƒ accesibilÄƒ de pe PC-ul Windows. Nu folosi adresa internÄƒ a unui container.
+Pe Debian, poți afla adresele VM-ului cu `hostname -I`. Alege adresa din rețeaua locală accesibilă de pe PC-ul Windows. Nu folosi adresa internă a unui container.
 
-ÃŽnainte de a porni agentul, deschide adresa InfraWatch Ã®n browserul calculatorului Windows. DacÄƒ dashboardul nu se deschide, rezolvÄƒ Ã®ntÃ¢i conectivitatea.
+Înainte de a porni agentul, deschide adresa InfraWatch în browserul calculatorului Windows. Dacă dashboardul nu se deschide, rezolvă întâi conectivitatea.
 
-`localhost` È™i `127.0.0.1` Ã®nseamnÄƒ calculatorul pe care ruleazÄƒ agentul. Pe laptop nu indicÄƒ automat VM-ul sau alt PC.
+`localhost` și `127.0.0.1` înseamnă calculatorul pe care rulează agentul. Pe laptop nu indică automat VM-ul sau alt PC.
 
-## 2. DescarcÄƒ È™i extrage
+## 2. Descarcă și extrage
 
-1. Deschide dashboardul È™i autentificÄƒ-te ca administrator.
-2. IntrÄƒ Ã®n **Download agent**.
-3. DescarcÄƒ arhiva pentru **Windows**, cu numele È™i versiunea afiÈ™ate.
-4. Trimite arhiva pe calculatorul de monitorizat, dacÄƒ ai descÄƒrcat-o pe alt dispozitiv.
-5. Extrage toate fiÈ™ierele Ã®ntr-un folder Ã®n care utilizatorul Windows poate scrie, de exemplu Documents.
-6. Deschide folderul **InfraWatch-Agent** din arhivÄƒ.
+1. Deschide dashboardul și autentifică-te ca administrator.
+2. Intră în **Download agent**.
+3. Descarcă arhiva pentru **Windows**, cu numele și versiunea afișate.
+4. Trimite arhiva pe calculatorul de monitorizat, dacă ai descărcat-o pe alt dispozitiv.
+5. Extrage toate fișierele într-un folder în care utilizatorul Windows poate scrie, de exemplu Documents.
+6. Deschide folderul **InfraWatch-Agent** din arhivă.
 
-Nu porni agentul direct din ZIP. PÄƒstreazÄƒ Ã®mpreunÄƒ fiÈ™ierele extrase, inclusiv scripturile È™i version.json.
+Nu porni agentul direct din ZIP. Păstrează împreună fișierele extrase, inclusiv scripturile și version.json.
 
-## 3. PorneÈ™te È™i aprobÄƒ dispozitivul
+## 3. Pornește și aprobă dispozitivul
 
 1. Dublu-click pe **Start Agent.cmd**.
-2. ÃŽn fereastra agentului, verificÄƒ **InfraWatch address**. Adresa este de obicei inclusÄƒ Ã®n descÄƒrcare; corecteaz-o dacÄƒ nu poate fi accesatÄƒ de pe acest PC.
-3. ApasÄƒ **Start**.
-4. Agentul afiÈ™eazÄƒ un cod de forma `ABC-234`.
-5. ApasÄƒ **Copy code** sau selecteazÄƒ codul È™i copiazÄƒ-l cu Ctrl+C.
-6. ÃŽn dashboard, deschide **Devices â†’ Add device â†’ Computer / Server**.
-7. Introdu codul sau foloseÈ™te **Paste code**. PoÈ›i folosi È™i Ctrl+V Ã®n cÃ¢mp; cratima se adaugÄƒ automat la introducerea manualÄƒ.
-8. Numele de afiÈ™are este opÈ›ional; fÄƒrÄƒ el se foloseÈ™te numele detectat al dispozitivului.
-9. ApasÄƒ **Connect device**.
+2. În fereastra agentului, verifică **InfraWatch address**. Adresa este de obicei inclusă în descărcare; corecteaz-o dacă nu poate fi accesată de pe acest PC.
+3. Apasă **Start**.
+4. Agentul afișează un cod de forma `ABC-234`.
+5. Apasă **Copy code** sau selectează codul și copiază-l cu Ctrl+C.
+6. În dashboard, deschide **Devices → Add device → Computer / Server**.
+7. Introdu codul sau folosește **Paste code**. Poți folosi și Ctrl+V în câmp; cratima se adaugă automat la introducerea manuală.
+8. Numele de afișare este opțional; fără el se folosește numele detectat al dispozitivului.
+9. Apasă **Connect device**.
 
-Codul este valabil cinci minute È™i poate fi aprobat o singurÄƒ datÄƒ. Nu trebuie sÄƒ introduci parola de administrator Ã®n agent: aprobarea se face Ã®n dashboard.
+Codul este valabil cinci minute și poate fi aprobat o singură dată. Nu trebuie să introduci parola de administrator în agent: aprobarea se face în dashboard.
 
-DupÄƒ aprobare, agentul afiÈ™eazÄƒ **CONNECTED**. ÃŽn dashboard apar dispozitivul È™i primele metrici.
+După aprobare, agentul afișează **CONNECTED**. În dashboard apar dispozitivul și primele metrici.
 
-## 4. Ce poÈ›i vedea
+## 4. Ce poți vedea
 
-ÃŽn **Overview** vezi dispozitivele asociate. Din **Devices â†’ Device details** poÈ›i consulta graficele È™i informaÈ›iile detectate despre calculator.
+În **Overview** vezi dispozitivele asociate. Din **Devices → Device details** poți consulta graficele și informațiile detectate despre calculator.
 
-- CPU È™i RAM: utilizarea curentÄƒ.
-- GPU: utilizarea motoarelor 3D, dacÄƒ Windows È™i driverul oferÄƒ contoarele necesare.
-- Disk: procentul de spaÈ›iu ocupat pe discul de sistem È™i GB liberi din total.
+- CPU și RAM: utilizarea curentă.
+- GPU: utilizarea motoarelor 3D, dacă Windows și driverul oferă contoarele necesare.
+- Disk: procentul de spațiu ocupat pe discul de sistem și GB liberi din total.
 - Uptime: timpul de la pornirea sistemului.
-- Componente: hostname, Windows, procesor, memorie, plÄƒci video È™i discuri.
+- Componente: hostname, Windows, procesor, memorie, plăci video și discuri.
 
-**Disk 98% Ã®n InfraWatch Ã®nseamnÄƒ capacitate ocupatÄƒ, nu activitate de scriere/citire de 98% Ã®n Task Manager.**
+**Disk 98% în InfraWatch înseamnă capacitate ocupată, nu activitate de scriere/citire de 98% în Task Manager.**
 
-Metricile urmÄƒresc un interval de o secundÄƒ; reÈ›eaua È™i citirea contoarelor pot Ã®ntÃ¢rzia actualizÄƒrile. InformaÈ›iile despre componente se recitesc aproximativ o datÄƒ pe orÄƒ.
+Metricile urmăresc un interval de o secundă; rețeaua și citirea contoarelor pot întârzia actualizările. Informațiile despre componente se recitesc aproximativ o dată pe oră.
 
-ÃŽn Device Settings poÈ›i ajusta pragurile È™i Ã®ntrerupe monitorizarea din aplicaÈ›ie. Administratorii primesc notificÄƒrile pentru alerte atunci cÃ¢nd sunt conectaÈ›i Ã®n dashboard.
+În Device Settings poți ajusta pragurile și întrerupe monitorizarea din aplicație. Administratorii primesc notificările pentru alerte atunci când sunt conectați în dashboard.
 
-## 5. Oprire È™i reconectare
+## 5. Oprire și reconectare
 
-- **Stop** opreÈ™te trimiterea metricilor.
-- ÃŽnchiderea ferestrei opreÈ™te agentul.
-- Pentru reluare, deschide acelaÈ™i folder, porneÈ™te Start Agent.cmd È™i apasÄƒ Start.
-- Nu mai este necesar un cod nou dacÄƒ asocierea salvatÄƒ este Ã®ncÄƒ validÄƒ.
+- **Stop** oprește trimiterea metricilor.
+- Închiderea ferestrei oprește agentul.
+- Pentru reluare, deschide același folder, pornește Start Agent.cmd și apasă Start.
+- Nu mai este necesar un cod nou dacă asocierea salvată este încă validă.
 
-Conexiunea este pÄƒstratÄƒ Ã®n connection.json, cu protecÈ›ia oferitÄƒ de contul Windows. PÄƒstreazÄƒ folderul pe dispozitivul È™i sub utilizatorul care au fÄƒcut asocierea. Nu distribui fiÈ™ierele de conexiune.
+Conexiunea este păstrată în connection.json, cu protecția oferită de contul Windows. Păstrează folderul pe dispozitivul și sub utilizatorul care au făcut asocierea. Nu distribui fișierele de conexiune.
 
-AceastÄƒ variantÄƒ nu instaleazÄƒ un serviciu Windows È™i nu adaugÄƒ automat agentul la pornirea calculatorului. Fereastra trebuie sÄƒ rÄƒmÃ¢nÄƒ deschisÄƒ Ã®n timpul monitorizÄƒrii.
+Această variantă nu instalează un serviciu Windows și nu adaugă automat agentul la pornirea calculatorului. Fereastra trebuie să rămână deschisă în timpul monitorizării.
 
-DupÄƒ aproximativ 30â€“35 de secunde fÄƒrÄƒ metrici, InfraWatch marcheazÄƒ dispozitivul offline.
+După aproximativ 30–35 de secunde fără metrici, InfraWatch marchează dispozitivul offline.
 
 ## 6. Actualizare
 
-Agentul Windows verificÄƒ disponibilitatea unei versiuni noi la conectare È™i apoi aproximativ la fiecare 30 de minute.
+Agentul Windows verifică disponibilitatea unei versiuni noi la conectare și apoi aproximativ la fiecare 30 de minute.
 
-1. DacÄƒ butonul afiÈ™eazÄƒ o versiune nouÄƒ, apasÄƒ **Update**.
-2. ConfirmÄƒ instalarea.
-3. Agentul Ã®nlocuieÈ™te fiÈ™ierele necesare È™i pÄƒstreazÄƒ conexiunea. DacÄƒ monitorizarea era pornitÄƒ, Ã®ncearcÄƒ sÄƒ o reia.
+1. Dacă butonul afișează o versiune nouă, apasă **Update**.
+2. Confirmă instalarea.
+3. Agentul înlocuiește fișierele necesare și păstrează conexiunea. Dacă monitorizarea era pornită, încearcă să o reia.
 
-Instalarea necesitÄƒ un click È™i confirmare; verificarea automatÄƒ nu Ã®nseamnÄƒ instalare automatÄƒ.
+Instalarea necesită un click și confirmare; verificarea automată nu înseamnă instalare automată.
 
-Pentru o versiune veche fÄƒrÄƒ updater, opreÈ™te agentul È™i copiazÄƒ fiÈ™ierele programului din noua arhivÄƒ Ã®n folderul existent. PÄƒstreazÄƒ **config.json** È™i **connection.json**. Nu folosi fiÈ™ierele de conexiune ale altui dispozitiv.
+Pentru o versiune veche fără updater, oprește agentul și copiază fișierele programului din noua arhivă în folderul existent. Păstrează **config.json** și **connection.json**. Nu folosi fișierele de conexiune ale altui dispozitiv.
 
 ## 7. Probleme frecvente
 
-| ProblemÄƒ | Ce verifici |
+| Problemă | Ce verifici |
 | --- | --- |
-| Nu apare niciun cod | Adresa din agent trebuie sÄƒ deschidÄƒ dashboardul Ã®n browser pe acelaÈ™i PC. VerificÄƒ È™i cÄƒ aplicaÈ›ia ruleazÄƒ. |
-| Cod expirat | ApasÄƒ Stop, apoi Start È™i aprobÄƒ noul cod Ã®n maximum cinci minute. |
-| PAIR AGAIN | Dispozitivul poate fi È™ters din aplicaÈ›ie. ApasÄƒ Start È™i aprobÄƒ un cod nou. |
-| PAUSED | Reia monitorizarea din Device Settings Ã®n dashboard. |
-| Nu se pÄƒstreazÄƒ asocierea | Extrage agentul Ã®ntr-un folder Ã®n care utilizatorul are drept de scriere. |
-| GPU indisponibil | Driverul poate sÄƒ nu ofere contoare compatibile; aceasta nu Ã®mpiedicÄƒ monitorizarea CPU/RAM. |
-| Agentul nu se deschide | VerificÄƒ extragerea completÄƒ a arhivei È™i fiÈ™ierele Start Agent.cmd, Agent.ps1, Pairing-Agent.ps1 È™i version.json. DacÄƒ politica sistemului blocheazÄƒ scripturile, pÄƒstreazÄƒ mesajul exact pentru diagnostic. |
-| Alt PC nu ajunge la VM | VerificÄƒ IP-ul VM-ului, configuraÈ›ia de reÈ›ea È™i regulile firewall pentru portul folosit. |
+| Nu apare niciun cod | Adresa din agent trebuie să deschidă dashboardul în browser pe același PC. Verifică și că aplicația rulează. |
+| Cod expirat | Apasă Stop, apoi Start și aprobă noul cod în maximum cinci minute. |
+| PAIR AGAIN | Dispozitivul poate fi șters din aplicație. Apasă Start și aprobă un cod nou. |
+| PAUSED | Reia monitorizarea din Device Settings în dashboard. |
+| Nu se păstrează asocierea | Extrage agentul într-un folder în care utilizatorul are drept de scriere. |
+| GPU indisponibil | Driverul poate să nu ofere contoare compatibile; aceasta nu împiedică monitorizarea CPU/RAM. |
+| Agentul nu se deschide | Verifică extragerea completă a arhivei și fișierele Start Agent.cmd, Agent.ps1, Pairing-Agent.ps1 și version.json. Dacă politica sistemului blochează scripturile, păstrează mesajul exact pentru diagnostic. |
+| Alt PC nu ajunge la VM | Verifică IP-ul VM-ului, configurația de rețea și regulile firewall pentru portul folosit. |
 
-Tutorialul descrie asocierea prin cod din versiunea actualÄƒ. Un README vechi dintr-o arhivÄƒ poate menÈ›iona introducerea manualÄƒ a tokenului sau un interval de cinci secunde; aceÈ™tia nu sunt paÈ™ii fluxului actual.
+Tutorialul descrie asocierea prin cod din versiunea actuală. Un README vechi dintr-o arhivă poate menționa introducerea manuală a tokenului sau un interval de cinci secunde; aceștia nu sunt pașii fluxului actual.
