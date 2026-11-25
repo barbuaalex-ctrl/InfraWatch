@@ -1,30 +1,30 @@
-# Tutorial — agentul Linux
+# Linux agent tutorial
 
-Agentul monitorizează calculatorul Linux pe care îl pornești: VM, server fizic sau EC2. Nu are nevoie de monitor ori interfață grafică; îl poți folosi din terminalul VS Code conectat prin SSH.
+The agent monitors the Linux machine where you run it: a VM, physical server, or EC2 instance. It needs no graphical interface or attached monitor; a remote VS Code SSH terminal is enough.
 
-Ai nevoie de **Linux și Python 3.9 sau mai nou**. Agentul folosește biblioteca standard Python: nu instalezi pachete cu pip și nu ai nevoie de sudo pentru rularea manuală.
+Requirements: **Linux and Python 3.9 or newer**. The agent uses the Python standard library. No pip packages or sudo privileges are required for manual operation.
 
-## 1. Alege adresa dashboardului
+## 1. Choose the dashboard address
 
-| Unde rulează agentul | Adresa folosită în proiect |
+| Agent location | Address in this project |
 | --- | --- |
-| Pe același Debian ca aplicația Docker/Nginx | http://127.0.0.1:8080 |
-| Pe alt dispozitiv Linux din aceeași rețea | http://VM_IP:8080 |
-| Pe EC2, cu tunelul SSH descris mai jos | http://127.0.0.1:9000 |
+| The same Debian host as the Docker/Nginx application | http://127.0.0.1:8080 |
+| Another Linux device on the same LAN | http://VM_IP:8080 |
+| EC2 using the SSH tunnel below | http://127.0.0.1:9000 |
 
-`127.0.0.1` este întotdeauna dispozitivul pe care rulează comanda. Un EC2 nu poate accesa direct un IP privat de acasă, precum 192.168.x.x.
+127.0.0.1 always refers to the machine running the command. EC2 cannot directly reach a private home address such as 192.168.x.x.
 
-Exemplul local folosește portul 8080, deoarece aplicația este accesată prin Nginx. Pentru o aplicație standalone pornită cu npm start, portul implicit este 3000.
+The examples use port 8080 because Nginx fronts this deployment. For a standalone application started with npm start, the default port is 3000.
 
-## 2. Descarcă și extrage — pe dispozitivul Linux
+## 2. Download and extract on Linux
 
-1. În dashboard, autentifică-te ca administrator.
-2. Intră în **Download agent** și descarcă arhiva **Linux**.
-3. Transferă ZIP-ul pe dispozitivul de monitorizat, dacă l-ai descărcat în altă parte.
-4. Extrage arhiva.
-5. Deschide folderul **InfraWatch-Agent** într-un terminal.
+1. Sign in to InfraWatch as an administrator.
+2. Open **Download agent** and download the **Linux** archive.
+3. Transfer the ZIP to the monitored Linux machine if necessary.
+4. Extract the archive.
+5. Open its **InfraWatch-Agent** directory in a terminal.
 
-Pentru arhiva v0.10.0, dacă ZIP-ul se află în folderul curent:
+For the v0.10.0 archive in the current directory:
 
 ```bash
 unzip infrawatch-agent-linux-v0.10.0.zip
@@ -33,123 +33,123 @@ python3 --version
 python3 agent.py --version
 ```
 
-Înlocuiește numele ZIP-ului când descarci altă versiune. Dacă unzip nu este instalat, poți extrage arhiva din interfața grafică sau, pe Debian/Ubuntu, îl poți instala cu `sudo apt install unzip`.
+Use the actual ZIP filename for other versions. If unzip is unavailable, use a graphical archive tool or install it on Debian/Ubuntu with sudo apt install unzip.
 
-Păstrează agent.py și version.json împreună. Nu este necesar să faci scriptul executabil când îl rulezi cu python3.
+Keep agent.py and version.json together. The script does not need executable permissions when invoked with python3.
 
-## 3. Pornește și aprobă dispozitivul
+## 3. Start and approve the device
 
-Pentru test pe același Debian unde rulează aplicația:
+For a local test on the Debian host running the application:
 
 ```bash
 python3 agent.py --server http://127.0.0.1:8080
 ```
 
-Pentru alt server din rețeaua locală:
+For another Linux machine on the same LAN:
 
 ```bash
 python3 agent.py --server http://VM_IP:8080
 ```
 
-Înlocuiește VM_IP cu adresa reală a VM-ului care găzduiește dashboardul.
+Replace VM_IP with the reachable address of the dashboard VM.
 
-1. În terminal apare **Pairing code: ABC-234**.
-2. Copiază codul. În terminalul integrat VS Code pe Linux poți folosi Ctrl+Shift+C.
-3. În dashboard deschide **Devices → Add device → Computer / Server**.
-4. Introdu codul sau lipește-l în câmp. Numele de afișare este opțional.
-5. Apasă **Connect device** înainte de expirarea codului, în maximum cinci minute.
-6. Așteaptă apariția metricilor în dashboard.
+1. The terminal displays Pairing code: ABC-234.
+2. Copy the code. In the VS Code terminal on Linux, Ctrl+Shift+C can copy selected text.
+3. In the dashboard, open **Devices > Add device > Computer / Server**.
+4. Enter or paste the code. A display name is optional.
+5. Click **Connect device** within five minutes.
+6. Wait for metrics to appear.
 
-La prima asociere nu introduci manual token sau server ID. Agentul le primește după aprobarea făcută de administrator.
+The agent receives its connection credentials after administrator approval; you do not enter a token or server ID manually.
 
-Mesajul `Connected. Sending metrics every second.` arată că agentul a încărcat o conexiune, dar confirmarea că livrarea funcționează este actualizarea dispozitivului în dashboard. Dacă imediat după mesaj apare o eroare, urmează indicația ei.
+The message Connected. Sending metrics every second. means a connection has been loaded. Confirm delivery by checking live updates in the dashboard. If an error immediately follows that message, follow the error instead.
 
-## 4. Ce raportează
+## 4. Reported information
 
-- CPU: utilizarea calculată între citiri.
-- RAM: procentul de memorie utilizată.
-- Disk: spațiul ocupat și GB liberi/total pe sistemul de fișiere rădăcină `/`.
-- Uptime: timpul de la pornirea Linux.
-- Inventar: hostname, distribuție, kernel, arhitectură, procesor, RAM și stocare.
+- CPU: usage calculated between samples.
+- RAM: memory usage percentage.
+- Disk: capacity used and free/total GB for the root filesystem, /.
+- Uptime: time since Linux started.
+- Inventory: hostname, distribution, kernel, architecture, CPU, memory, and root storage.
 
-GPU este **indisponibil** în agentul Linux actual. Nu este trimisă o valoare artificială de 0%.
+GPU telemetry is **unavailable** in the current Linux agent; it does not send a synthetic zero.
 
-Metricile urmăresc o actualizare pe secundă. Întârzierile de rețea și erorile pot reduce frecvența. Inventarul componentelor se actualizează aproximativ o dată pe oră.
+Metrics target one sample per second. Network delays and retries can lower the effective frequency. Hardware inventory refreshes approximately hourly.
 
-Agentul Linux raportează capacitatea sistemului de fișiere `/`; nu reprezintă automat toate discurile montate și nici activitatea I/O dintr-un manager de procese.
+Root filesystem capacity does not necessarily cover every mounted disk, and it does not measure disk I/O activity.
 
-## 5. Oprire și reconectare
+## 5. Stop and reconnect
 
-Pentru agentul pornit manual:
+For a manually started agent:
 
-- Lasă terminalul deschis cât timp dorești monitorizarea.
-- Apasă **Ctrl+C** pentru oprire.
-- Rulează din nou aceeași comandă pentru reconectare.
+- Keep the terminal open while monitoring.
+- Press **Ctrl+C** to stop.
+- Run the same command to reconnect.
 
-Asocierea se păstrează implicit în:
+The default connection file is:
 
 ```text
 ~/.config/infrawatch-agent/connection.json
 ```
 
-Nu trebuie să aprobi alt cod la fiecare pornire. Folosește același utilizator Linux și același director de stare. Rularea cu sudo ar folosi alt utilizator și poate crea o asociere separată.
+A valid saved connection does not need repeated approval. Use the same Linux account and state directory. Running with sudo changes the user context and may create a separate pairing.
 
-Fișierul de conexiune este privat și nu trebuie trimis altor persoane ori copiat pe alte dispozitive.
+The connection file is private. Do not share it or copy it to another device.
 
-## 6. Test separat sau asociere nouă
+## 6. Separate tests and new pairings
 
-Dacă vrei să separi testul local de o conexiune existentă:
+To keep a local test separate from an existing connection:
 
 ```bash
 python3 agent.py --server http://127.0.0.1:8080 --state-dir ~/.config/infrawatch-local-test
 ```
 
-Agentul păstrează asocierea în directorul indicat prin --state-dir. Folosește același director și la următoarea pornire.
+The --state-dir option selects where the agent saves its connection. Reuse that directory on subsequent launches.
 
-Dacă primești `Device connection rejected` după ștergerea dispozitivului din dashboard, verifică mai întâi că ai adresa aplicației corecte. Pentru o asociere nouă, alege un director nefolosit:
+If Device connection rejected appears after deleting the device in the dashboard, first confirm that the server address is correct. To create a new pairing, select an unused state directory:
 
 ```bash
 python3 agent.py --server http://127.0.0.1:8080 --state-dir ~/.config/infrawatch-local-test-2
 ```
 
-Aprobă codul nou în dashboard. Această comandă creează o asociere nouă; nu repară sau șterge automat dispozitivul vechi.
+Approve the new code. This creates a new pairing; it does not repair or remove the old dashboard entry automatically.
 
-Dacă mesajul spune că directorul aparține altui server InfraWatch, folosește adresa salvată sau un director nou. Chiar și două adrese care duc la aceeași aplicație sunt comparate ca adrese diferite de agent.
+If the agent reports that the state directory belongs to another InfraWatch server, use the saved address or a new state directory. Even two addresses pointing to the same backend are treated as different server addresses by this check.
 
-## 7. Actualizarea agentului Linux
+## 7. Update the Linux agent
 
-În această versiune, actualizarea Linux este manuală:
+Linux updates are manual in this release:
 
-1. Oprește agentul cu Ctrl+C.
-2. Descarcă și extrage noua arhivă Linux.
-3. Înlocuiește agent.py și version.json.
-4. Păstrează directorul de stare cu connection.json.
-5. Pornește din nou agentul cu aceeași adresă și același --state-dir, dacă l-ai folosit.
+1. Stop the agent with Ctrl+C.
+2. Download and extract the new Linux archive.
+3. Replace agent.py and version.json.
+4. Preserve the state directory containing connection.json.
+5. Restart with the same server address and --state-dir, if used.
 
-Nu copia fișierul de conexiune al altui dispozitiv. Updaterul cu buton din agentul Windows nu se aplică agentului Linux.
+Do not copy credentials from another device. The Windows agent's update button does not apply to Linux.
 
-## 8. EC2 creat prin Terraform în acest proiect
+## 8. EC2 provisioned by this project's Terraform configuration
 
-Terraform instalează deja agentul și serviciul systemd pe EC2. **Nu mai porni în paralel încă o copie manuală a agentului pe EC2.**
+Terraform already installs the agent and its systemd service on EC2. **Do not run an additional manual copy of the agent alongside that service.**
 
-De pe Debian, deschide tunelul către IP-ul EC2 afișat de Terraform:
+From Debian, open the tunnel to the current EC2 public IP:
 
 ```bash
 ssh -i ~/.ssh/infrawatch-ec2 -o ExitOnForwardFailure=yes -R 127.0.0.1:9000:127.0.0.1:8080 ec2-user@EC2_PUBLIC_IP
 ```
 
-Înlocuiește EC2_PUBLIC_IP. Păstrează sesiunea deschisă: portul 9000 de pe EC2 duce acum către aplicația de pe Debian.
+Replace EC2_PUBLIC_IP and keep the session open. EC2 loopback port 9000 now forwards to the dashboard on Debian.
 
-În terminalul EC2:
+In the EC2 terminal:
 
 ```bash
 sudo cloud-init status --wait
 sudo journalctl -u infrawatch-agent -n 20 --no-pager
 ```
 
-Copiază codul afișat și aprobă-l în dashboard. Dacă serviciul rulează deja și are o asociere validă, nu mai apare un cod nou.
+Copy the pairing code from the log and approve it in the dashboard. An already paired service with valid saved credentials will not request a new code.
 
-Comenzi utile, **rulate pe EC2**:
+Useful commands, **run on EC2**:
 
 ```bash
 sudo systemctl status infrawatch-agent --no-pager
@@ -158,21 +158,21 @@ sudo systemctl start infrawatch-agent
 sudo systemctl restart infrawatch-agent
 ```
 
-Stop oprește serviciul acum, dar nu îl dezactivează pentru următoarea pornire a sistemului. Serviciul creat de Terraform folosește directorul de stare `/var/lib/infrawatch-agent`, diferit de cel al unui agent pornit manual de utilizator.
+Stopping the service does not disable it for the next boot. The Terraform-created service stores its connection under /var/lib/infrawatch-agent, separately from a manually started user's agent.
 
-La reboot, systemd pornește agentul automat. Metricile ajung în dashboard numai dacă aplicația și tunelul funcționează. Dacă închizi SSH, tunelul se închide și dispozitivul va apărea offline.
+systemd starts the enabled service at boot. Metric delivery still requires the dashboard and SSH tunnel. Closing the SSH session closes the tunnel; the device will eventually appear offline.
 
-Pentru detaliile Terraform și ștergerea resurselor, vezi [ghidul demonstrației](../devops/DEMO.md).
+See the [demo guide](../devops/DEMO.md) for Terraform and resource cleanup.
 
-## 9. Probleme frecvente
+## 9. Troubleshooting
 
-| Mesaj sau simptom | Rezolvare |
+| Message or symptom | Resolution |
 | --- | --- |
-| Cannot reach InfraWatch | Verifică adresa și portul din perspectiva dispozitivului pe care rulează agentul. Pentru EC2 verifică tunelul. |
-| version.json is missing | Extrage arhiva completă și păstrează version.json lângă agent.py. |
-| Code expired | Agentul Linux solicită automat un cod nou. Citește ultimul cod din terminal/log. |
-| Monitoring paused | Reia monitorizarea din Device Settings în dashboard. |
-| Device connection rejected | Verifică aplicația țintă; dacă dispozitivul a fost șters, asociază-l din nou într-un director de stare nou. |
-| Dispozitiv duplicat | Poate ai folosit alt utilizator sau alt --state-dir. Revino la asocierea corectă și oprește copia suplimentară. |
-| Offline după închiderea terminalului | Pentru rularea manuală, procesul trebuie să rămână activ. Pe EC2 folosește serviciul deja creat. |
-| IP-ul privat al VM-ului nu merge de pe EC2 | Folosește tunelul; adresa privată nu este accesibilă direct din AWS. |
+| Cannot reach InfraWatch | Check the address and port from the agent machine. On EC2, check the SSH tunnel. |
+| version.json is missing | Extract the whole archive and keep version.json beside agent.py. |
+| Code expired | The Linux agent automatically requests a new code; use the latest one in its terminal or logs. |
+| Monitoring paused | Resume monitoring in Device Settings. |
+| Device connection rejected | Check the target backend. If the device was removed, pair again using a new state directory. |
+| Duplicate device | Another user account or state directory may have created a second pairing. Stop the extra copy and use the intended connection. |
+| Offline after closing the terminal | A manual agent needs its process to remain running. On the provisioned EC2, use the existing service. |
+| EC2 cannot reach the VM's private IP | Use the reverse SSH tunnel; the home LAN address is not directly reachable from AWS. |

@@ -22,10 +22,10 @@ Paired computers appear in Overview with CPU, RAM, GPU and disk readings. CPU/RA
 
 After 30–35 seconds without metrics, a connected device is marked offline and a connection alert opens. Active alerts and resolved incidents appear in Alerts. Administrators receive silent in-app notifications once per new alert; viewers see status but receive no notifications. Optional silent desktop notifications can be enabled from Alerts and require browser permission on localhost or HTTPS. The web app must remain open and signed in as admin for notifications.
 
-## Tutoriale agenți
+## Agent tutorials
 
-- [Cum folosești agentul Windows](docs/agent-windows.md)
-- [Cum folosești agentul Linux](docs/agent-linux.md)
+- [Windows agent tutorial](docs/agent-windows.md)
+- [Linux agent tutorial](docs/agent-linux.md)
 
 ## Run standalone
 

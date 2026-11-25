@@ -1,102 +1,102 @@
-# Tutorial — agentul Windows
+# Windows agent tutorial
 
-Agentul rulează pe calculatorul pe care vrei să îl monitorizezi. Dashboardul InfraWatch poate rula pe alt calculator sau pe VM. Asocierea se face printr-un cod temporar; nu trebuie să copiezi manual un token sau un server ID.
+The agent runs on the Windows computer you want to monitor. The InfraWatch dashboard can run on another computer or a VM. Pairing uses a temporary code; you do not need to copy a token or server ID manually.
 
-## 1. Alege adresa corectă
+## 1. Choose the correct dashboard address
 
-| Unde rulează agentul Windows | Adresa InfraWatch |
+| Agent location | InfraWatch address |
 | --- | --- |
-| Pe un PC din aceeași rețea cu VM-ul Debian | http://VM_IP:8080 |
-| Pe același Windows pe care rulează aplicația cu npm start | http://127.0.0.1:3000 |
-| Pe alt PC, când aplicația rulează cu npm start | http://IP_CALCULATOR_APLICATIE:3000 |
+| Windows PC on the same network as the Debian VM | http://VM_IP:8080 |
+| The same Windows PC that runs the application with npm start | http://127.0.0.1:3000 |
+| Another PC, with the application running through npm start | http://APPLICATION_PC_IP:3000 |
 
-Înlocuiește numele din exemple cu IP-ul real. În configurația proiectului, intrarea prin Docker/Nginx este portul **8080**.
+Replace the placeholders with actual IP addresses. This project's Docker/Nginx entry point uses port **8080**.
 
-Pe Debian, poți afla adresele VM-ului cu `hostname -I`. Alege adresa din rețeaua locală accesibilă de pe PC-ul Windows. Nu folosi adresa internă a unui container.
+On Debian, hostname -I lists the VM's addresses. Choose the LAN address reachable from Windows, rather than an internal container address.
 
-Înainte de a porni agentul, deschide adresa InfraWatch în browserul calculatorului Windows. Dacă dashboardul nu se deschide, rezolvă întâi conectivitatea.
+First, open the dashboard address in a browser on the Windows device. If it does not load, resolve connectivity before starting the agent.
 
-`localhost` și `127.0.0.1` înseamnă calculatorul pe care rulează agentul. Pe laptop nu indică automat VM-ul sau alt PC.
+localhost and 127.0.0.1 refer to the computer running the agent. On a laptop, they do not refer to another PC or VM.
 
-## 2. Descarcă și extrage
+## 2. Download and extract
 
-1. Deschide dashboardul și autentifică-te ca administrator.
-2. Intră în **Download agent**.
-3. Descarcă arhiva pentru **Windows**, cu numele și versiunea afișate.
-4. Trimite arhiva pe calculatorul de monitorizat, dacă ai descărcat-o pe alt dispozitiv.
-5. Extrage toate fișierele într-un folder în care utilizatorul Windows poate scrie, de exemplu Documents.
-6. Deschide folderul **InfraWatch-Agent** din arhivă.
+1. Open InfraWatch and sign in as an administrator.
+2. Open **Download agent**.
+3. Download the **Windows** archive with the displayed version.
+4. Transfer the archive to the monitored device if necessary.
+5. Extract all files into a writable folder, such as Documents.
+6. Open the **InfraWatch-Agent** directory inside the extracted archive.
 
-Nu porni agentul direct din ZIP. Păstrează împreună fișierele extrase, inclusiv scripturile și version.json.
+Do not run the agent from inside the ZIP. Keep all extracted files together, including the scripts and version.json.
 
-## 3. Pornește și aprobă dispozitivul
+## 3. Start and pair the device
 
-1. Dublu-click pe **Start Agent.cmd**.
-2. În fereastra agentului, verifică **InfraWatch address**. Adresa este de obicei inclusă în descărcare; corecteaz-o dacă nu poate fi accesată de pe acest PC.
-3. Apasă **Start**.
-4. Agentul afișează un cod de forma `ABC-234`.
-5. Apasă **Copy code** sau selectează codul și copiază-l cu Ctrl+C.
-6. În dashboard, deschide **Devices → Add device → Computer / Server**.
-7. Introdu codul sau folosește **Paste code**. Poți folosi și Ctrl+V în câmp; cratima se adaugă automat la introducerea manuală.
-8. Numele de afișare este opțional; fără el se folosește numele detectat al dispozitivului.
-9. Apasă **Connect device**.
+1. Double-click **Start Agent.cmd**.
+2. Check **InfraWatch address** in the agent window. The download normally includes this address; correct it if the Windows PC cannot reach it.
+3. Click **Start**.
+4. A temporary code appears, for example ABC-234.
+5. Click **Copy code**, or select the code and press Ctrl+C.
+6. In the dashboard, open **Devices > Add device > Computer / Server**.
+7. Enter the code, click **Paste code**, or press Ctrl+V in the code field. The separator is inserted automatically when typing.
+8. Optionally enter a display name. Otherwise, InfraWatch uses the detected device name.
+9. Click **Connect device**.
 
-Codul este valabil cinci minute și poate fi aprobat o singură dată. Nu trebuie să introduci parola de administrator în agent: aprobarea se face în dashboard.
+Codes expire after five minutes and can be approved only once. The agent does not need the administrator password; approval happens in the dashboard.
 
-După aprobare, agentul afișează **CONNECTED**. În dashboard apar dispozitivul și primele metrici.
+After approval, the agent displays CONNECTED and the first metrics appear in InfraWatch.
 
-## 4. Ce poți vedea
+## 4. View metrics and hardware
 
-În **Overview** vezi dispozitivele asociate. Din **Devices → Device details** poți consulta graficele și informațiile detectate despre calculator.
+Paired devices appear in Overview. Open Devices > Device details for charts and detected hardware.
 
-- CPU și RAM: utilizarea curentă.
-- GPU: utilizarea motoarelor 3D, dacă Windows și driverul oferă contoarele necesare.
-- Disk: procentul de spațiu ocupat pe discul de sistem și GB liberi din total.
-- Uptime: timpul de la pornirea sistemului.
-- Componente: hostname, Windows, procesor, memorie, plăci video și discuri.
+- CPU and RAM show current usage.
+- GPU shows 3D engine usage where compatible Windows driver counters are available.
+- Disk shows system-drive capacity used and free/total GB.
+- Uptime shows time since system startup.
+- Inventory includes hostname, Windows version, processor, memory, graphics adapters, and drives.
 
-**Disk 98% în InfraWatch înseamnă capacitate ocupată, nu activitate de scriere/citire de 98% în Task Manager.**
+**Disk at 98% means 98% of capacity is occupied. It does not mean 98% disk activity in Task Manager.**
 
-Metricile urmăresc un interval de o secundă; rețeaua și citirea contoarelor pot întârzia actualizările. Informațiile despre componente se recitesc aproximativ o dată pe oră.
+Metrics target a one-second interval. Network latency and counter collection can delay updates. Hardware inventory refreshes approximately hourly.
 
-În Device Settings poți ajusta pragurile și întrerupe monitorizarea din aplicație. Administratorii primesc notificările pentru alerte atunci când sunt conectați în dashboard.
+Device Settings allows an administrator to change thresholds and pause monitoring. Administrators receive alert notifications while signed in to the dashboard.
 
-## 5. Oprire și reconectare
+## 5. Stop and reconnect
 
-- **Stop** oprește trimiterea metricilor.
-- Închiderea ferestrei oprește agentul.
-- Pentru reluare, deschide același folder, pornește Start Agent.cmd și apasă Start.
-- Nu mai este necesar un cod nou dacă asocierea salvată este încă validă.
+- Click **Stop** to stop transmitting metrics.
+- Closing the agent window also stops it.
+- To reconnect, open Start Agent.cmd from the same folder and click Start.
+- A new pairing code is unnecessary while the saved connection remains valid.
 
-Conexiunea este păstrată în connection.json, cu protecția oferită de contul Windows. Păstrează folderul pe dispozitivul și sub utilizatorul care au făcut asocierea. Nu distribui fișierele de conexiune.
+The connection is saved in connection.json using Windows user-scoped protection. Keep it on the device and under the Windows account that performed the pairing. Do not share connection files.
 
-Această variantă nu instalează un serviciu Windows și nu adaugă automat agentul la pornirea calculatorului. Fereastra trebuie să rămână deschisă în timpul monitorizării.
+This agent does not install a Windows service or add itself to system startup. Keep its window open while monitoring.
 
-După aproximativ 30–35 de secunde fără metrici, InfraWatch marchează dispozitivul offline.
+InfraWatch marks the device offline after approximately 30-35 seconds without metrics.
 
-## 6. Actualizare
+## 6. Update the agent
 
-Agentul Windows verifică disponibilitatea unei versiuni noi la conectare și apoi aproximativ la fiecare 30 de minute.
+The Windows agent checks for updates on connection and approximately every 30 minutes.
 
-1. Dacă butonul afișează o versiune nouă, apasă **Update**.
-2. Confirmă instalarea.
-3. Agentul înlocuiește fișierele necesare și păstrează conexiunea. Dacă monitorizarea era pornită, încearcă să o reia.
+1. When an update is available, click the update button.
+2. Confirm installation.
+3. The updater replaces application files while retaining the saved device connection. If monitoring was running, it attempts to resume it.
 
-Instalarea necesită un click și confirmare; verificarea automată nu înseamnă instalare automată.
+Update checking is automatic; installation requires a click and confirmation.
 
-Pentru o versiune veche fără updater, oprește agentul și copiază fișierele programului din noua arhivă în folderul existent. Păstrează **config.json** și **connection.json**. Nu folosi fișierele de conexiune ale altui dispozitiv.
+For an older version without the updater, stop the agent and copy the program files from the new Windows archive into the existing folder. Keep config.json and connection.json. Do not reuse another device's connection files.
 
-## 7. Probleme frecvente
+## 7. Troubleshooting
 
-| Problemă | Ce verifici |
+| Symptom | What to check |
 | --- | --- |
-| Nu apare niciun cod | Adresa din agent trebuie să deschidă dashboardul în browser pe același PC. Verifică și că aplicația rulează. |
-| Cod expirat | Apasă Stop, apoi Start și aprobă noul cod în maximum cinci minute. |
-| PAIR AGAIN | Dispozitivul poate fi șters din aplicație. Apasă Start și aprobă un cod nou. |
-| PAUSED | Reia monitorizarea din Device Settings în dashboard. |
-| Nu se păstrează asocierea | Extrage agentul într-un folder în care utilizatorul are drept de scriere. |
-| GPU indisponibil | Driverul poate să nu ofere contoare compatibile; aceasta nu împiedică monitorizarea CPU/RAM. |
-| Agentul nu se deschide | Verifică extragerea completă a arhivei și fișierele Start Agent.cmd, Agent.ps1, Pairing-Agent.ps1 și version.json. Dacă politica sistemului blochează scripturile, păstrează mesajul exact pentru diagnostic. |
-| Alt PC nu ajunge la VM | Verifică IP-ul VM-ului, configurația de rețea și regulile firewall pentru portul folosit. |
+| No code appears | Confirm the agent address opens the dashboard in a browser on the same PC and that InfraWatch is running. |
+| Code expired | Click Stop, then Start, and approve the new code within five minutes. |
+| PAIR AGAIN | The device may have been removed from InfraWatch. Click Start and approve a new code. |
+| PAUSED | Resume monitoring from Device Settings in the dashboard. |
+| Pairing is not remembered | Extract the agent into a folder writable by the current Windows user. |
+| GPU unavailable | The driver may not provide compatible counters; CPU/RAM monitoring can still work. |
+| Agent window does not open | Check that the ZIP was fully extracted and includes Start Agent.cmd, Agent.ps1, Pairing-Agent.ps1, and version.json. Retain the exact error if system policy blocks the scripts. |
+| Another PC cannot reach the VM | Check the VM address, network configuration, and firewall rules for the dashboard port. |
 
-Tutorialul descrie asocierea prin cod din versiunea actuală. Un README vechi dintr-o arhivă poate menționa introducerea manuală a tokenului sau un interval de cinci secunde; aceștia nu sunt pașii fluxului actual.
+Older bundled instructions may describe manual tokens or five-second reporting. This tutorial describes the current temporary-code pairing flow and one-second target interval.
