@@ -107,6 +107,11 @@ echo "Pornesc noua versiune."
 "${compose[@]}" up -d --no-deps "$TARGET_SERVICE"
 wait_for_app "$target_container"
 
+if [ "${SIMULATE_FAILURE:-false}" = "true" ]; then
+  echo "Eroare simulata pentru verificarea revenirii."
+  false
+fi
+
 mounted_volume=$(docker inspect "$target_container" \
   --format '{{range .Mounts}}{{if eq .Destination "/app/backend/data"}}{{.Name}}{{end}}{{end}}')
 

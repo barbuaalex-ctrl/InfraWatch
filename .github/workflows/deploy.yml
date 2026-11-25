@@ -8,6 +8,10 @@ on:
         required: true
         default: "ci-14"
         type: string
+      test_rollback:
+        description: "Simulate a deployment failure"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -29,6 +33,7 @@ jobs:
     env:
       IMAGE: ghcr.io/barbuaalex-ctrl/infrawatch
       RELEASE_TAG: ${{ inputs.version }}
+      SIMULATE_FAILURE: ${{ inputs.test_rollback }}
 
     steps:
       - name: Check current application
